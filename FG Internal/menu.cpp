@@ -207,7 +207,7 @@ namespace menu {
 			FGInternalHelper::disable_fly = !FGInternal::OTHERS::fly_enabled;
 		}
 
-		if (io.KeysDown[VK_F2] && !OldKeysDown[VK_F3])
+		if (io.KeysDown[VK_F2] && !OldKeysDown[VK_F2])
 		{
 			FGInternal::OTHERS::speed_enabled = !FGInternal::OTHERS::speed_enabled;
 			FGInternalHelper::disable_speed = !FGInternal::OTHERS::speed_enabled;
@@ -243,6 +243,16 @@ namespace menu {
 			FGInternalHelper::disable_non_jinxed_players = !FGInternal::ESP::non_jinxed_players_enabled;
 		}
 
+		if (io.KeysDown[VK_F9] && !OldKeysDown[VK_F9])
+		{
+			FGInternal::OTHERS::stun_collision = !FGInternal::OTHERS::stun_collision;
+		}
+
+		if (io.KeysDown[VK_F10] && !OldKeysDown[VK_F10])
+		{
+			FGInternal::OTHERS::object_collision = !FGInternal::OTHERS::object_collision;
+		}
+
 		if (io.NavInputs[ImGuiNavInput_FocusPrev] > 0.f) 
 		{
 			FGInternal::OTHERS::speed_enabled = true;
@@ -272,7 +282,7 @@ namespace menu {
 		}
 		else
 		{
-			draw_manager::add_text_on_screen({ 5, y }, 0xFF7E3EDE, 12, "> F1 > Flying Enabled");
+			draw_manager::add_text_on_screen({ 5, y }, 0xFF7E3EDE, 12, "> F1 > Flying Disabled");
 			y += text_size.y + 3.f;
 		}
 
@@ -283,7 +293,7 @@ namespace menu {
 		}
 		else
 		{
-			draw_manager::add_text_on_screen({ 5, y }, 0xFF7E3EDE, 12, "> F2 > Movement Speed Enabled");
+			draw_manager::add_text_on_screen({ 5, y }, 0xFF7E3EDE, 12, "> F2 > Movement Speed Disabled");
 			y += text_size.y + 3.f;
 		}
 
@@ -294,7 +304,7 @@ namespace menu {
 		}
 		else
 		{
-			draw_manager::add_text_on_screen({ 5, y }, 0xFF7E3EDE, 12, "> F3 > Dive Speed Enabled");
+			draw_manager::add_text_on_screen({ 5, y }, 0xFF7E3EDE, 12, "> F3 > Dive Speed Disabled");
 			y += text_size.y + 3.f;
 		}
 
@@ -305,7 +315,7 @@ namespace menu {
 		}
 		else
 		{
-			draw_manager::add_text_on_screen({ 5, y }, 0xFF7E3EDE, 12, "> F4 > Gravity Scale Enabled");
+			draw_manager::add_text_on_screen({ 5, y }, 0xFF7E3EDE, 12, "> F4 > Gravity Scale Disabled");
 			y += text_size.y + 3.f;
 		}
 
@@ -341,6 +351,30 @@ namespace menu {
 		else
 		{
 			draw_manager::add_text_on_screen({ 5, y }, 0xFF7E3EDE, 12, "> F7 > Show Non-Jinxed Players");
+			y += text_size.y + 3.f;
+		}
+
+////////////////////////
+
+		if (FGInternal::OTHERS::stun_collision)
+		{
+			draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, "> F9 > Stun Collisions Disabled");
+			y += text_size.y + 3.f;
+		}
+		else
+		{
+			draw_manager::add_text_on_screen({ 5, y }, 0xFF7E3EDE, 12, "> F9 > Stun Collisions Enabled");
+			y += text_size.y + 3.f;
+		}
+
+		if (FGInternal::OTHERS::object_collision)
+		{
+			draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, "> F10 > Object Collisions Disabled");
+			y += text_size.y + 3.f;
+		}
+		else
+		{
+			draw_manager::add_text_on_screen({ 5, y }, 0xFF7E3EDE, 12, "> F10 > Object Collisions Enabled");
 			y += text_size.y + 3.f;
 		}
 	}
