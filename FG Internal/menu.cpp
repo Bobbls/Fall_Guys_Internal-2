@@ -69,7 +69,7 @@ namespace menu {
 	void draw_button(const char* name, bool& config_key, bool* change_opositive = nullptr)
 	{
 		push_color_for_button(config_key);
-		if (ImGui::Button(name, { 194, 25 })) 
+		if (ImGui::Button(name, { 244, 25 })) 
 		{
 			config_key = !config_key;
 			if (change_opositive)
@@ -92,7 +92,7 @@ namespace menu {
 	void draw_tab(const char* name, bool& active)
 	{
 		ImGui::Text(name);
-		ImGui::SameLine(187);
+		ImGui::SameLine(237);
 
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.f, 92.f / 255.f, 196.f / 255.f, 1.f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.f, 92.f / 255.f, 196.f / 255.f, 1.f });
@@ -104,7 +104,6 @@ namespace menu {
 	std::once_flag init_style;
 	void draw() 
 	{
-
 		std::call_once(init_style, [&]() {
 			auto& style = ImGui::GetStyle();
 			style.WindowRounding = 0.f;
@@ -119,7 +118,7 @@ namespace menu {
 			});
 
 		ImGui::Begin("esp_tab", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
-		ImGui::SetWindowSize({ 200, 0 }, ImGuiCond_Always);
+		ImGui::SetWindowSize({ 250, 0 }, ImGuiCond_Always);
 		draw_tab("Visuals", esp_tab_active);
 		if (esp_tab_active) {
 			draw_button("Correct Doors [ Doors Rush ]", FGInternal::ESP::correct_doors_enabled, &FGInternalHelper::disable_correct_doors);
@@ -129,7 +128,7 @@ namespace menu {
 		ImGui::End();
 
 		ImGui::Begin("misc_tab", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
-		ImGui::SetWindowSize({ 200, 0 }, ImGuiCond_Always);
+		ImGui::SetWindowSize({ 250, 0 }, ImGuiCond_Always);
 		draw_tab("Collisions", collisions_tab_active);
 		if (collisions_tab_active) {
 			draw_button("Disable Stuns", FGInternal::OTHERS::stun_collision);
@@ -138,7 +137,7 @@ namespace menu {
 		ImGui::End();
 
 		ImGui::Begin("boosts_tab", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
-		ImGui::SetWindowSize({ 200, 0 }, ImGuiCond_Always);
+		ImGui::SetWindowSize({ 250, 0 }, ImGuiCond_Always);
 		draw_tab("Movement", boost_tab_active);
 		if (boost_tab_active) {
 			draw_button("Flying", FGInternal::OTHERS::fly_enabled, &FGInternalHelper::disable_fly);
@@ -148,7 +147,7 @@ namespace menu {
 			draw_button("Dive Boost (Default: 16.5)", FGInternal::OTHERS::dive_enabled, &FGInternalHelper::disable_dive);
 			draw_slider("Dive Speed", &FGInternal::OTHERS::dive_speed, 15, 50);
 			draw_button("Gravity Scale (Default: 1.5)", FGInternal::OTHERS::gravity_enabled, &FGInternalHelper::disable_gravity);
-			draw_slider("Gravitation", &FGInternal::OTHERS::gravity_scale, 1, 5);
+			draw_slider("Gravitation", &FGInternal::OTHERS::gravity_scale, 0, 5);
 		}
 		ImGui::End();
 	}

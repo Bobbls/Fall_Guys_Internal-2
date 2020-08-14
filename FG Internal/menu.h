@@ -29,7 +29,7 @@ namespace FGInternal
 	};
 };
 
-namespace FGInternalHelper 
+namespace FGInternalHelper
 {
 	extern bool disable_correct_doors;
 	extern bool disable_correct_path;
@@ -39,7 +39,7 @@ namespace FGInternalHelper
 	extern bool disable_speed;
 	extern bool disable_dive;
 	extern bool disable_gravity;
-}
+};
 
 namespace menu { 
 	void draw( );
