@@ -84,6 +84,9 @@
     <ClInclude Include="FG Internal\render.h">
       <Filter>cheat</Filter>
     </ClInclude>
+    <ClInclude Include="values.h">
+      <Filter>cheat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FG Internal\imgui\imgui.cpp">

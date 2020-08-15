@@ -19,6 +19,7 @@
 #include "unity_sdk.h"
 #include "fnv_hash.hpp"
 #include "menu.h"
+#include "values.h"
 
 #include "directx_helper.hpp"
 
@@ -35,28 +36,17 @@ std::unique_ptr<vmt_smart_hook> swap_chain_vmt = nullptr;
 bool render::menu_is_open = false;
 std::once_flag init_device;
 
-const float default_max_speed = 9.500000f;
-
-const float default_anyCollisionStunForce = 28.000000f;
-const float default_dynamicCollisionStunForce = 10.000000f;
-const float default_CollisionThreshold = 14.000000f;
-const float default_carryMaxSpeed = 8.000000f;
-const float default_carryPickupDuration = 0.100000f;
-const float default_diveForce = 16.500000f;
-const float default_airDiveForce = 7.000000f;
-const float default_gravityScale = 1.500000f;
-
 namespace game {
 	uintptr_t game = 0;
 	uintptr_t unity = 0;
 	uintptr_t main_camera = 0;
 }
 
-bool world_to_screen( const vector& world, vector& screen_out ) {
+bool world_to_screen(const vector& world, vector& screen_out) {
 	D3DXMATRIX m_world;
-	d3d_helper::tmpD3DXMatrixIdentity( &m_world );
+	d3d_helper::tmpD3DXMatrixIdentity(&m_world);
 
-	auto& io = ImGui::GetIO( );
+	auto& io = ImGui::GetIO();
 
 	auto w = io.DisplaySize.x;
 	auto h = io.DisplaySize.y;
@@ -69,18 +59,18 @@ bool world_to_screen( const vector& world, vector& screen_out ) {
 	v_viewport.MinZ = 1.f;
 	v_viewport.MaxZ = 0.f;
 
-	auto screen_v = D3DXVECTOR3( );
-	auto world_v = D3DXVECTOR3( );
+	auto screen_v = D3DXVECTOR3();
+	auto world_v = D3DXVECTOR3();
 	world_v.x = world.x;
 	world_v.y = world.z;
 	world_v.z = world.y;
 
-	auto projection_matrix = reinterpret_cast<D3DMATRIX*>( game::main_camera + 0x9C ); //Camera::GetProjectionMatrix
-	auto view_matrix = reinterpret_cast<D3DMATRIX*>( game::main_camera + 0x5C ); //Camera::GetWorldToCameraMatrix
+	auto projection_matrix = reinterpret_cast<D3DMATRIX*>(game::main_camera + 0x9C); //Camera::GetProjectionMatrix
+	auto view_matrix = reinterpret_cast<D3DMATRIX*>(game::main_camera + 0x5C); //Camera::GetWorldToCameraMatrix
 
-	d3d_helper::tmpD3DXVec3Project( &screen_v, &world_v, &v_viewport, projection_matrix, view_matrix, &m_world );
+	d3d_helper::tmpD3DXVec3Project(&screen_v, &world_v, &v_viewport, projection_matrix, view_matrix, &m_world);
 
-	if ( screen_v.z < 0.f ) {
+	if (screen_v.z < 0.0001f) {
 		screen_out.x = -1;
 		screen_out.y = -1;
 		return false;
@@ -93,70 +83,70 @@ bool world_to_screen( const vector& world, vector& screen_out ) {
 }
 
 
-bool get_bounding_box2d( UnityEngine_Collider_o* collider, vector& vec_min, vector& vec_max ) {
-	auto bounds = UnityEngine_Bounds_o( ); reinterpret_cast<UnityEngine_Bounds_o* ( __stdcall* )( UnityEngine_Bounds_o*, UnityEngine_Collider_o*, void* )>( game::game + signatures::get_bound )( &bounds, collider, 0 );
-	auto position = *reinterpret_cast<vector*>( &bounds.fields.m_Center );
-	auto bounding_box = *reinterpret_cast<vector*>( &bounds.fields.m_Extents );
+bool get_bounding_box2d(UnityEngine_Collider_o* collider, vector& vec_min, vector& vec_max) {
+	auto bounds = UnityEngine_Bounds_o(); reinterpret_cast<UnityEngine_Bounds_o* (__stdcall*)(UnityEngine_Bounds_o*, UnityEngine_Collider_o*, void*)>(game::game + signatures::get_bound)(&bounds, collider, 0);
+	auto position = *reinterpret_cast<vector*>(&bounds.fields.m_Center);
+	auto bounding_box = *reinterpret_cast<vector*>(&bounds.fields.m_Extents);
 
-	vector world_pos[ 8 ];
-	vector screen_pos[ 8 ];
-	for ( size_t i = 0; i < 8; i++ )
-		world_pos[ i ] = position;
+	vector world_pos[8];
+	vector screen_pos[8];
+	for (size_t i = 0; i < 8; i++)
+		world_pos[i] = position;
 
-	world_pos[ 0 ].x += bounding_box.x;
-	world_pos[ 0 ].y += bounding_box.y;
+	world_pos[0].x += bounding_box.x;
+	world_pos[0].y += bounding_box.y;
 
-	world_pos[ 1 ].x -= bounding_box.x;
-	world_pos[ 1 ].y += bounding_box.y;
+	world_pos[1].x -= bounding_box.x;
+	world_pos[1].y += bounding_box.y;
 
-	world_pos[ 2 ].x += bounding_box.x;
-	world_pos[ 2 ].y -= bounding_box.y;
+	world_pos[2].x += bounding_box.x;
+	world_pos[2].y -= bounding_box.y;
 
-	world_pos[ 3 ].x -= bounding_box.x;
-	world_pos[ 3 ].y -= bounding_box.y;
+	world_pos[3].x -= bounding_box.x;
+	world_pos[3].y -= bounding_box.y;
 
-	for ( size_t i = 0; i < 4; i++ )
-		world_pos[ 4 + i ] = world_pos[ i ];
-	for ( size_t i = 0; i < 4; i++ )
-		world_pos[ i ].z -= bounding_box.z;
-	for ( size_t i = 0; i < 4; i++ )
-		world_pos[ 4 + i ].z += bounding_box.z;
+	for (size_t i = 0; i < 4; i++)
+		world_pos[4 + i] = world_pos[i];
+	for (size_t i = 0; i < 4; i++)
+		world_pos[i].z -= bounding_box.z;
+	for (size_t i = 0; i < 4; i++)
+		world_pos[4 + i].z += bounding_box.z;
 
-	for ( size_t i = 0; i < 8; i++ )
-		if ( !world_to_screen( world_pos[ i ], screen_pos[ i ] ) )
+	for (size_t i = 0; i < 8; i++)
+		if (!world_to_screen(world_pos[i], screen_pos[i]))
 			return false;
 
-	vec_min = screen_pos[ 0 ];
+	vec_min = screen_pos[0];
 	vec_max = vec_min;
-	for ( size_t i = 0; i < 8; i++ ) {
-		const auto& _x = screen_pos[ i ].x;
-		const auto& _y = screen_pos[ i ].y;
-		if ( _x < vec_min.x )
+	for (size_t i = 0; i < 8; i++) {
+		const auto& _x = screen_pos[i].x;
+		const auto& _y = screen_pos[i].y;
+		if (_x < vec_min.x)
 			vec_min.x = _x;
-		if ( _y < vec_min.y )
+		if (_y < vec_min.y)
 			vec_min.y = _y;
-		if ( _x > vec_max.x )
+		if (_x > vec_max.x)
 			vec_max.x = _x;
-		if ( _y > vec_max.y )
+		if (_y > vec_max.y)
 			vec_max.y = _y;
 	}
 
 	return true;
 }
 
-vector get_forward( uint64_t transform_internal ) {
-	auto some_ptr = *reinterpret_cast<uint64_t*>( transform_internal + 0x38 );
-	auto index = *reinterpret_cast<int32_t*>( transform_internal + 0x38 + sizeof( uint64_t ) );
-	if ( !some_ptr )
-		return vector( );
+vector get_forward(uint64_t transform_internal) {
+	auto some_ptr = *reinterpret_cast<uint64_t*>(transform_internal + 0x38);
+	auto index = *reinterpret_cast<int32_t*>(transform_internal + 0x38 + sizeof(uint64_t));
+	if (!some_ptr)
+		return vector();
 
-	auto relation_array = *reinterpret_cast<uint64_t*>( some_ptr + 0x18 );
-	if ( !relation_array )
-		return vector( );
+	auto relation_array = *reinterpret_cast<uint64_t*>(some_ptr + 0x18);
+	if (!relation_array)
+		return vector();
 
-	auto dependency_index_array = *reinterpret_cast<uint64_t*>( some_ptr + 0x20 );
-	if ( !dependency_index_array )
-		return vector( );
+	auto dependency_index_array = *reinterpret_cast<uint64_t*>(some_ptr + 0x20);
+	if (!dependency_index_array)
+		return vector();
 
 	__m128i temp_0;
 	__m128i temp_1;
@@ -173,74 +163,74 @@ vector get_forward( uint64_t transform_internal ) {
 	__m128 xmmword_142E8A0 = { 0.f, 0.f, 0.f, FLT_MIN };
 	__m128 xmmword_142CC80 = { 1.f, 1.f, 1.f, 1.f };
 
-	auto temp_main = *reinterpret_cast<__m128i*>( relation_array + index * 48 + 16 );
-	auto dependency_index = *reinterpret_cast<int32_t*>( dependency_index_array + 4 * index );
+	auto temp_main = *reinterpret_cast<__m128i*>(relation_array + index * 48 + 16);
+	auto dependency_index = *reinterpret_cast<int32_t*>(dependency_index_array + 4 * index);
 
-	if ( dependency_index >= 0 ) {
-		temp_0 = _mm_load_si128( ( const __m128i* ) & xmmword_142E890 );
-		temp_1 = _mm_and_si128( _mm_castps_si128( xmmword_142E830 ), temp_0 );
-		temp_2 = _mm_castsi128_ps( _mm_load_si128( ( const __m128i* ) & xmmword_142E8A0 ) );
-		temp_3 = _mm_and_ps( _mm_castsi128_ps( _mm_shuffle_epi32( _mm_castps_si128( xmmword_142E890 ), 0 ) ), temp_2 );
+	if (dependency_index >= 0) {
+		temp_0 = _mm_load_si128((const __m128i*) & xmmword_142E890);
+		temp_1 = _mm_and_si128(_mm_castps_si128(xmmword_142E830), temp_0);
+		temp_2 = _mm_castsi128_ps(_mm_load_si128((const __m128i*) & xmmword_142E8A0));
+		temp_3 = _mm_and_ps(_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(xmmword_142E890), 0)), temp_2);
 
 		do {
 			auto relation_index = 6 * dependency_index;
-			temp_4 = *reinterpret_cast<__m128*>( relation_array + 8 * relation_index + 16 );
-			temp_5 = _mm_loadu_si128( ( const __m128i* )( relation_array + 8 * relation_index + 32 ) );
-			dependency_index = *reinterpret_cast <int32_t*>( dependency_index_array + 4 * dependency_index );
-			temp_6 = _mm_xor_si128( _mm_and_si128( temp_5, temp_0 ), _mm_castps_si128( xmmword_142CC80 ) );
-			temp_7 = _mm_castsi128_ps( _mm_xor_si128(
+			temp_4 = *reinterpret_cast<__m128*>(relation_array + 8 * relation_index + 16);
+			temp_5 = _mm_loadu_si128((const __m128i*)(relation_array + 8 * relation_index + 32));
+			dependency_index = *reinterpret_cast <int32_t*>(dependency_index_array + 4 * dependency_index);
+			temp_6 = _mm_xor_si128(_mm_and_si128(temp_5, temp_0), _mm_castps_si128(xmmword_142CC80));
+			temp_7 = _mm_castsi128_ps(_mm_xor_si128(
 				_mm_and_si128(
 					temp_0,
-					_mm_castps_si128( _mm_or_ps(
+					_mm_castps_si128(_mm_or_ps(
 						_mm_andnot_ps(
 							temp_2,
 							_mm_mul_ps(
-								_mm_castsi128_ps( _mm_shuffle_epi32( temp_6, 65 ) ),
-								_mm_castsi128_ps( _mm_shuffle_epi32( temp_6, -102 ) ) ) ),
-						temp_3 ) ) ),
-				temp_main ) );
+								_mm_castsi128_ps(_mm_shuffle_epi32(temp_6, 65)),
+								_mm_castsi128_ps(_mm_shuffle_epi32(temp_6, -102)))),
+						temp_3))),
+				temp_main));
 			temp_main = _mm_xor_si128(
 				temp_1,
 				_mm_shuffle_epi32(
-					_mm_castps_si128( _mm_sub_ps(
+					_mm_castps_si128(_mm_sub_ps(
 						_mm_sub_ps(
 							_mm_sub_ps(
-								_mm_mul_ps( temp_4, _mm_castsi128_ps( _mm_shuffle_epi32( _mm_castps_si128( temp_7 ), -46 ) ) ),
-								_mm_castsi128_ps( _mm_shuffle_epi32(
-									_mm_castps_si128( _mm_mul_ps(
+								_mm_mul_ps(temp_4, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(temp_7), -46))),
+								_mm_castsi128_ps(_mm_shuffle_epi32(
+									_mm_castps_si128(_mm_mul_ps(
 										temp_4,
-										_mm_castsi128_ps( _mm_shuffle_epi32( _mm_castps_si128( temp_7 ), -120 ) ) ) ),
-									30 ) ) ),
-							_mm_castsi128_ps( _mm_shuffle_epi32(
-								_mm_castps_si128( _mm_mul_ps(
-									_mm_castsi128_ps( _mm_shuffle_epi32( _mm_castps_si128( temp_4 ), -81 ) ),
-									temp_7 ) ),
-								-115 ) ) ),
-						_mm_castsi128_ps( _mm_shuffle_epi32(
-							_mm_castps_si128( _mm_mul_ps(
-								_mm_movelh_ps( temp_4, temp_4 ),
-								_mm_castsi128_ps( _mm_shuffle_epi32( _mm_castps_si128( temp_7 ), -11 ) ) ) ),
-							99 ) ) ) ),
-					-46 ) );
-		} while ( dependency_index >= 0 );
+										_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(temp_7), -120)))),
+									30))),
+							_mm_castsi128_ps(_mm_shuffle_epi32(
+								_mm_castps_si128(_mm_mul_ps(
+									_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(temp_4), -81)),
+									temp_7)),
+								-115))),
+						_mm_castsi128_ps(_mm_shuffle_epi32(
+							_mm_castps_si128(_mm_mul_ps(
+								_mm_movelh_ps(temp_4, temp_4),
+								_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(temp_7), -11)))),
+							99)))),
+					-46));
+		} while (dependency_index >= 0);
 	}
-	auto quad = *reinterpret_cast<quaternion*>( &temp_main );
-	return vector( 0.f, 1.f, 0.f ) * quad;
+	auto quad = *reinterpret_cast<quaternion*>(&temp_main);
+	return vector(0.f, 1.f, 0.f) * quad;
 }
 
-vector get_position( uint64_t transform_internal ) {
-	auto some_ptr = *reinterpret_cast<uint64_t*>( transform_internal + 0x38 );
-	auto index = *reinterpret_cast<int32_t*>( transform_internal + 0x38 + sizeof( uint64_t ) );
-	if ( !some_ptr )
-		return vector( );
+vector get_position(uint64_t transform_internal) {
+	auto some_ptr = *reinterpret_cast<uint64_t*>(transform_internal + 0x38);
+	auto index = *reinterpret_cast<int32_t*>(transform_internal + 0x38 + sizeof(uint64_t));
+	if (!some_ptr)
+		return vector();
 
-	auto relation_array = *reinterpret_cast<uint64_t*>( some_ptr + 0x18 );
-	if ( !relation_array )
-		return vector( );
+	auto relation_array = *reinterpret_cast<uint64_t*>(some_ptr + 0x18);
+	if (!relation_array)
+		return vector();
 
-	auto dependency_index_array = *reinterpret_cast<uint64_t*>( some_ptr + 0x20 );
-	if ( !dependency_index_array )
-		return vector( );
+	auto dependency_index_array = *reinterpret_cast<uint64_t*>(some_ptr + 0x20);
+	if (!dependency_index_array)
+		return vector();
 
 	__m128i temp_0;
 	__m128 xmmword_1410D1340 = { -2.f, 2.f, -2.f, 0.f };
@@ -248,185 +238,185 @@ vector get_position( uint64_t transform_internal ) {
 	__m128 xmmword_1410D1360 = { -2.f, -2.f, 2.f, 0.f };
 	__m128 temp_1;
 	__m128 temp_2;
-	auto temp_main = *reinterpret_cast<__m128*>( relation_array + index * 48 );
-	auto dependency_index = *reinterpret_cast<int32_t*>( dependency_index_array + 4 * index );
+	auto temp_main = *reinterpret_cast<__m128*>(relation_array + index * 48);
+	auto dependency_index = *reinterpret_cast<int32_t*>(dependency_index_array + 4 * index);
 
-	while ( dependency_index >= 0 ) {
+	while (dependency_index >= 0) {
 		auto relation_index = 6 * dependency_index;
 
-		temp_0 = *reinterpret_cast<__m128i*>( relation_array + 8 * relation_index + 16 );
-		temp_1 = *reinterpret_cast<__m128*>( relation_array + 8 * relation_index + 32 );
-		temp_2 = *reinterpret_cast<__m128*>( relation_array + 8 * relation_index );
+		temp_0 = *reinterpret_cast<__m128i*>(relation_array + 8 * relation_index + 16);
+		temp_1 = *reinterpret_cast<__m128*>(relation_array + 8 * relation_index + 32);
+		temp_2 = *reinterpret_cast<__m128*>(relation_array + 8 * relation_index);
 
-		__m128 v10 = _mm_mul_ps( temp_1, temp_main );
-		__m128 v11 = _mm_castsi128_ps( _mm_shuffle_epi32( temp_0, 0 ) );
-		__m128 v12 = _mm_castsi128_ps( _mm_shuffle_epi32( temp_0, 85 ) );
-		__m128 v13 = _mm_castsi128_ps( _mm_shuffle_epi32( temp_0, -114 ) );
-		__m128 v14 = _mm_castsi128_ps( _mm_shuffle_epi32( temp_0, -37 ) );
-		__m128 v15 = _mm_castsi128_ps( _mm_shuffle_epi32( temp_0, -86 ) );
-		__m128 v16 = _mm_castsi128_ps( _mm_shuffle_epi32( temp_0, 113 ) );
+		__m128 v10 = _mm_mul_ps(temp_1, temp_main);
+		__m128 v11 = _mm_castsi128_ps(_mm_shuffle_epi32(temp_0, 0));
+		__m128 v12 = _mm_castsi128_ps(_mm_shuffle_epi32(temp_0, 85));
+		__m128 v13 = _mm_castsi128_ps(_mm_shuffle_epi32(temp_0, -114));
+		__m128 v14 = _mm_castsi128_ps(_mm_shuffle_epi32(temp_0, -37));
+		__m128 v15 = _mm_castsi128_ps(_mm_shuffle_epi32(temp_0, -86));
+		__m128 v16 = _mm_castsi128_ps(_mm_shuffle_epi32(temp_0, 113));
 		__m128 v17 = _mm_add_ps(
 			_mm_add_ps(
 				_mm_add_ps(
 					_mm_mul_ps(
 						_mm_sub_ps(
-							_mm_mul_ps( _mm_mul_ps( v11, xmmword_1410D1350 ), v13 ),
-							_mm_mul_ps( _mm_mul_ps( v12, xmmword_1410D1360 ), v14 ) ),
-						_mm_castsi128_ps( _mm_shuffle_epi32( _mm_castps_si128( v10 ), -86 ) ) ),
+							_mm_mul_ps(_mm_mul_ps(v11, xmmword_1410D1350), v13),
+							_mm_mul_ps(_mm_mul_ps(v12, xmmword_1410D1360), v14)),
+						_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v10), -86))),
 					_mm_mul_ps(
 						_mm_sub_ps(
-							_mm_mul_ps( _mm_mul_ps( v15, xmmword_1410D1360 ), v14 ),
-							_mm_mul_ps( _mm_mul_ps( v11, xmmword_1410D1340 ), v16 ) ),
-						_mm_castsi128_ps( _mm_shuffle_epi32( _mm_castps_si128( v10 ), 85 ) ) ) ),
+							_mm_mul_ps(_mm_mul_ps(v15, xmmword_1410D1360), v14),
+							_mm_mul_ps(_mm_mul_ps(v11, xmmword_1410D1340), v16)),
+						_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v10), 85)))),
 				_mm_add_ps(
 					_mm_mul_ps(
 						_mm_sub_ps(
-							_mm_mul_ps( _mm_mul_ps( v12, xmmword_1410D1340 ), v16 ),
-							_mm_mul_ps( _mm_mul_ps( v15, xmmword_1410D1350 ), v13 ) ),
-						_mm_castsi128_ps( _mm_shuffle_epi32( _mm_castps_si128( v10 ), 0 ) ) ),
-					v10 ) ),
-			temp_2 );
+							_mm_mul_ps(_mm_mul_ps(v12, xmmword_1410D1340), v16),
+							_mm_mul_ps(_mm_mul_ps(v15, xmmword_1410D1350), v13)),
+						_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v10), 0))),
+					v10)),
+			temp_2);
 
 		temp_main = v17;
-		dependency_index = *reinterpret_cast<int32_t*>( dependency_index_array + 4 * dependency_index );
+		dependency_index = *reinterpret_cast<int32_t*>(dependency_index_array + 4 * dependency_index);
 	}
 
-	return *reinterpret_cast<vector*>( &temp_main );
+	return *reinterpret_cast<vector*>(&temp_main);
 }
 
-void update( ) {
+void update() {
 
-	game::game = std::uintptr_t( GetModuleHandle( "GameAssembly.dll" ) );
-	if ( !game::game )
-		return;
-
-	game::unity = std::uintptr_t( GetModuleHandle( "UnityPlayer.dll" ) );
-	if ( !game::unity )
+	game::game = std::uintptr_t(GetModuleHandle("GameAssembly.dll"));
+	if (!game::game)
 		return;
 
-	auto re_input = *reinterpret_cast<Rewired_ReInput_c**>( game::game + signatures::re_input );
-	if ( !re_input )
+	game::unity = std::uintptr_t(GetModuleHandle("UnityPlayer.dll"));
+	if (!game::unity)
 		return;
-	auto cursor_manager = *reinterpret_cast<CursorManager_c**>( game::game + signatures::cursor_manager );
-	if ( !cursor_manager )
+
+	auto re_input = *reinterpret_cast<Rewired_ReInput_c**>(game::game + signatures::re_input);
+	if (!re_input)
 		return;
-	if ( render::menu_is_open ) {
+	auto cursor_manager = *reinterpret_cast<CursorManager_c**>(game::game + signatures::cursor_manager);
+	if (!cursor_manager)
+		return;
+	if (render::menu_is_open) {
 		cursor_manager->static_fields->_Instance_k__BackingField->fields.usingKeyboard = true;
 		cursor_manager->static_fields->_Instance_k__BackingField->fields.cursorVisible = true;
 	}
 	re_input->static_fields->HQLaKohzXRajMoKwSNuhmhfTAmCU = render::menu_is_open; //Rewired_ReInput__get_inputAllowed
 
-	auto global = *reinterpret_cast<MPG_Utility_Singleton_GlobalGameStateClient__c**>( game::game + signatures::global_game_state );
-	if ( !global )
+	auto global = *reinterpret_cast<MPG_Utility_Singleton_GlobalGameStateClient__c**>(game::game + signatures::global_game_state);
+	if (!global)
 		return;
 
 	auto instance = global->static_fields->s_Instance;
-	if ( !instance || reinterpret_cast<Il2CppClass*>( instance->klass ) != instance->klass->_1.klass )
+	if (!instance || reinterpret_cast<Il2CppClass*>(instance->klass) != instance->klass->_1.klass)
 		return;
 
 	auto game_state_machine = instance->fields._gameStateMachine;
-	if ( !game_state_machine )
+	if (!game_state_machine)
 		return;
 
 	auto current_state = game_state_machine->fields._currentState;
-	if ( !current_state || reinterpret_cast<Il2CppClass*>( current_state->klass ) != current_state->klass->_1.klass )
+	if (!current_state || reinterpret_cast<Il2CppClass*>(current_state->klass) != current_state->klass->_1.klass)
 		return;
 
-	game::main_camera = std::uintptr_t( 0 );
-	auto gameobjectmanager = *reinterpret_cast<game_object_manager**>( game::unity + signatures::game_object_manager );
-	for ( auto i = gameobjectmanager->tagged_objects; std::uintptr_t( i ) != std::uintptr_t( &gameobjectmanager->last_tagged_object ); i = i->next_node ) {
+	game::main_camera = std::uintptr_t(0);
+	auto gameobjectmanager = *reinterpret_cast<game_object_manager**>(game::unity + signatures::game_object_manager);
+	for (auto i = gameobjectmanager->tagged_objects; std::uintptr_t(i) != std::uintptr_t(&gameobjectmanager->last_tagged_object); i = i->next_node) {
 		auto gameobject = i->object;
-		if ( gameobject->get_object_tag( ) == 5 ) {
-			auto component_size = *reinterpret_cast<int32_t*>( std::uintptr_t( gameobject ) + unity::components_size );
-			auto components_ptr = *reinterpret_cast<uintptr_t*>( std::uintptr_t( gameobject ) + unity::components_ptr );
+		if (gameobject->get_object_tag() == 5) {
+			auto component_size = *reinterpret_cast<int32_t*>(std::uintptr_t(gameobject) + unity::components_size);
+			auto components_ptr = *reinterpret_cast<uintptr_t*>(std::uintptr_t(gameobject) + unity::components_ptr);
 
-			for ( auto compoment_index = 0; compoment_index < component_size; compoment_index++ ) {
-				auto current_compoment = *reinterpret_cast<uintptr_t*>( components_ptr + ( compoment_index * 0x10 ) + 0x8 );
-				if ( !current_compoment )
+			for (auto compoment_index = 0; compoment_index < component_size; compoment_index++) {
+				auto current_compoment = *reinterpret_cast<uintptr_t*>(components_ptr + (compoment_index * 0x10) + 0x8);
+				if (!current_compoment)
 					continue;
 
-				auto compoment_mono = *reinterpret_cast<Il2CppObject**>( current_compoment + unity::mono_ptr );
-				if ( !compoment_mono || reinterpret_cast<Il2CppClass*>( compoment_mono->klass ) != compoment_mono->klass->_1.klass )
+				auto compoment_mono = *reinterpret_cast<Il2CppObject**>(current_compoment + unity::mono_ptr);
+				if (!compoment_mono || reinterpret_cast<Il2CppClass*>(compoment_mono->klass) != compoment_mono->klass->_1.klass)
 					continue;
 
-				const constexpr auto Camera = fnv::hash_constexpr( "Camera" );
-				if ( fnv::hash_runtime( compoment_mono->klass->_1.name ) != Camera )
+				const constexpr auto Camera = fnv::hash_constexpr("Camera");
+				if (fnv::hash_runtime(compoment_mono->klass->_1.name) != Camera)
 					continue;
 
-				if ( *reinterpret_cast<bool*>( current_compoment + unity::camera::enabled ) ) {
+				if (*reinterpret_cast<bool*>(current_compoment + unity::camera::enabled)) {
 					game::main_camera = current_compoment;
 					break;
 				}
 			}
-			if ( game::main_camera )
+			if (game::main_camera)
 				break;
 		}
 	}
 
-	if ( !game::main_camera )
+	if (!game::main_camera)
 		return;
 
-	auto& io = ImGui::GetIO( );
+	auto& io = ImGui::GetIO();
 
-	const constexpr auto StateGameInProgress = fnv::hash_constexpr( "StateGameInProgress" );
-	const constexpr auto round_jinxed = fnv::hash_constexpr( "round_jinxed" );
-	const constexpr auto round_door_dash = fnv::hash_constexpr( "round_door_dash" );
-	const constexpr auto round_tip_toe = fnv::hash_constexpr( "round_tip_toe" );
+	const constexpr auto StateGameInProgress = fnv::hash_constexpr("StateGameInProgress");
+	const constexpr auto round_jinxed = fnv::hash_constexpr("round_jinxed");
+	const constexpr auto round_door_dash = fnv::hash_constexpr("round_door_dash");
+	const constexpr auto round_tip_toe = fnv::hash_constexpr("round_tip_toe");
+	const constexpr auto round_match_fall = fnv::hash_constexpr("round_match_fall");
 
-	if ( fnv::hash_runtime( current_state->klass->_1.name ) == StateGameInProgress ) {
-		auto state_game_in_progress = reinterpret_cast<FGClient_StateGameInProgress_o*>( current_state );
+	if (fnv::hash_runtime(current_state->klass->_1.name) == StateGameInProgress) {
+		auto state_game_in_progress = reinterpret_cast<FGClient_StateGameInProgress_o*>(current_state);
 		auto client_game_manager = state_game_in_progress->fields._clientGameManager;
-		if ( !client_game_manager )
+		if (!client_game_manager)
 			return;
 		auto player_list = client_game_manager->fields._players;
-		if ( !player_list )
+		if (!player_list)
 			return;
 
 		auto game_state_view = instance->fields._GameStateView_k__BackingField;
-		if ( !game_state_view )
+		if (!game_state_view)
 			return;
 
 		auto current_game_level = game_state_view->fields.CurrentGameLevelName;
-		if ( !current_game_level )
+		if (!current_game_level)
 			return;
 
-		auto game_level = fnv::whash_runtime( current_game_level->fields.c_str );
-		
-		auto my_player_team_id = -1;	
-		for ( auto i = 0; i < client_game_manager->fields._playerTeamManager->fields._allTeams->fields._size; i++ ) {
-			auto team = client_game_manager->fields._playerTeamManager->fields._allTeams->fields._items->m_Items[ i ];
-			if ( !team )
-				continue;
-			for ( auto y = 0; y < team->fields._members->fields._size; y++ ) {
-				auto player_data = team->fields._members->fields._items->m_Items[ y ];
-				if ( !player_data )
+		auto game_level = fnv::whash_runtime(current_game_level->fields.c_str);
+
+		auto get_character_team_id = [&](uint32_t net_id) -> int32_t {
+			for (auto i = 0; i < client_game_manager->fields._playerTeamManager->fields._allTeams->fields._size; i++) {
+				auto team = client_game_manager->fields._playerTeamManager->fields._allTeams->fields._items->m_Items[i];
+				if (!team)
 					continue;
 
-				if ( player_data->fields.objectNetID.fields.m_NetworkID != client_game_manager->fields._myPlayerNetID.fields.m_NetworkID )
-					continue;
+				for (auto y = 0; y < team->fields._members->fields._size; y++) {
+					auto player_data = team->fields._members->fields._items->m_Items[y];
+					if (!player_data)
+						continue;
 
-				my_player_team_id = player_data->fields.TeamID;
-				break;
+					if (player_data->fields.objectNetID.fields.m_NetworkID != net_id)
+						continue;
+
+					return player_data->fields.TeamID;
+				}
 			}
+			return -1;
+		};
 
-			if ( my_player_team_id != -1)
-				break;
-		}
+		auto my_player_team_id = get_character_team_id(client_game_manager->fields._myPlayerNetID.fields.m_NetworkID);
 
 		for (auto i = 0; i < player_list->fields.count; i++) {
 			auto character = reinterpret_cast<FallGuysCharacterController_o*>(player_list->fields.entries->m_Items[i].fields.value);
 			if (!character)
 				continue;
 
-			if (character->fields._IsLocalPlayer_k__BackingField)
-			{
+			if (character->fields._IsLocalPlayer_k__BackingField) {
 				auto game_object = *reinterpret_cast<uintptr_t*> (*reinterpret_cast<uintptr_t*> (std::uintptr_t(character) + unity::native_ptr) + unity::compoment_owner);
 				auto character_transform = *reinterpret_cast<uintptr_t*> (*reinterpret_cast<uintptr_t*> (game_object + unity::components_ptr) + unity::transform_compoment);
 
-				if (FGInternal::OTHERS::fly_enabled) 
-				{
+				if (FGInternal::MOVEMENT::fly_enabled) {
 					character->fields._ApplyGravity_k__BackingField = false;
-					character->fields._data->fields.carryMaxSpeed = FGInternal::OTHERS::fly_speed;
+					character->fields._data->fields.carryMaxSpeed = FGInternal::MOVEMENT::fly_speed;
 					auto camera_transform = *reinterpret_cast<uintptr_t*> (*reinterpret_cast<uintptr_t*>(*reinterpret_cast<uintptr_t*> (std::uintptr_t(game::main_camera) + unity::compoment_owner) + unity::components_ptr) + unity::transform_compoment);
 					auto direction = get_forward(camera_transform);
 
@@ -434,133 +424,128 @@ void update( ) {
 					auto veloctiy = reinterpret_cast<vector*> (movement + 0x15C);
 
 					if (io.KeysDown[0x57] || io.NavInputs[ImGuiNavInput_LStickUp] > 0.f)
-						*veloctiy = direction * FGInternal::OTHERS::fly_speed;
+						*veloctiy = direction * FGInternal::MOVEMENT::fly_speed;
+					//else
+					//	*veloctiy = vector(0, 0, 0);
 
 					if (io.KeysDown[VK_SPACE] || io.NavInputs[ImGuiNavInput_Activate] > 0.f)
-						veloctiy->z = FGInternal::OTHERS::fly_speed;
+						veloctiy->z = FGInternal::MOVEMENT::fly_speed;
 					else if (io.KeysDown[VK_SHIFT] || io.NavInputs[ImGuiNavInput_Cancel] > 0.f)
-						veloctiy->z = -FGInternal::OTHERS::fly_speed;
+						veloctiy->z = -FGInternal::MOVEMENT::fly_speed;
 					else
 						veloctiy->z = 0.f;
-
 				}
-				else if (FGInternalHelper::disable_fly)
-				{
-					character->fields._data->fields.carryMaxSpeed = default_carryMaxSpeed;
+				else if (FGInternalHelper::disable_fly) {
+					character->fields._data->fields.carryMaxSpeed = VALUES::DEFAULT_VALUES::default_carryMaxSpeed;
 					character->fields._ApplyGravity_k__BackingField = true;
 					FGInternalHelper::disable_fly = false;
 				}
 
-				character->fields._data->fields.anyCollisionStunForce = FGInternal::OTHERS::stun_collision ? FLT_MAX : default_anyCollisionStunForce;
-				character->fields._data->fields.dynamicCollisionStunForce = FGInternal::OTHERS::stun_collision ? FLT_MAX : default_dynamicCollisionStunForce;
+				character->fields._data->fields.anyCollisionStunForce = FGInternal::COLLISIONS::stun_collision ? FLT_MAX : VALUES::DEFAULT_VALUES::default_anyCollisionStunForce;
+				character->fields._data->fields.dynamicCollisionStunForce = FGInternal::COLLISIONS::stun_collision ? FLT_MAX : VALUES::DEFAULT_VALUES::default_dynamicCollisionStunForce;
+				character->fields._ragdollController->fields.CollisionThreshold = FGInternal::COLLISIONS::object_collision ? FLT_MAX : VALUES::DEFAULT_VALUES::default_CollisionThreshold;
 
 				//add option in menu
-				character->fields._data->fields.carryPickupDuration = 0.f;
+				//character->fields._data->fields.carryPickupDuration = 0.f;
 
-				character->fields._ragdollController->fields.CollisionThreshold = FGInternal::OTHERS::object_collision ? FLT_MAX : default_CollisionThreshold;
-				if (FGInternal::OTHERS::object_collision)
+				if (FGInternal::COLLISIONS::object_collision)
 					character->fields._ragdollController->fields.CollisionUpperBodyTransfer = 0.f;
 
-				if (FGInternal::OTHERS::speed_enabled)
-				{
-					character->fields._data->fields.carryMaxSpeed = FGInternal::OTHERS::speed_boost;
-					character->fields._data->fields.normalMaxSpeed = FGInternal::OTHERS::speed_boost;
+				if (FGInternal::MOVEMENT::speed_enabled) {
+					character->fields._data->fields.normalMaxSpeed = FGInternal::MOVEMENT::speed_boost;
+					character->fields._data->fields.carryMaxSpeed = FGInternal::MOVEMENT::speed_boost;
+					character->fields._data->fields.grabbingMaxSpeed = FGInternal::MOVEMENT::speed_boost;
 				}
-				else if (FGInternalHelper::disable_speed)
-				{
-					character->fields._data->fields.carryMaxSpeed = default_carryMaxSpeed;
-					character->fields._data->fields.normalMaxSpeed = default_max_speed;
+				else if (FGInternalHelper::disable_speed) {
+					character->fields._data->fields.normalMaxSpeed = VALUES::DEFAULT_VALUES::default_max_speed;
+					character->fields._data->fields.carryMaxSpeed = VALUES::DEFAULT_VALUES::default_carryMaxSpeed;
+					character->fields._data->fields.grabbingMaxSpeed = VALUES::DEFAULT_VALUES::default_grabbingMaxSpeed;
 					FGInternalHelper::disable_speed = false;
 				}
 
-				if (FGInternal::OTHERS::dive_enabled)
-				{
-					character->fields._data->fields.diveForce = FGInternal::OTHERS::dive_speed;
-					character->fields._data->fields.airDiveForce = FGInternal::OTHERS::dive_speed;
+				if (FGInternal::MOVEMENT::dive_enabled) {
+					character->fields._data->fields.diveForce = FGInternal::MOVEMENT::dive_speed;
+					character->fields._data->fields.airDiveForce = FGInternal::MOVEMENT::dive_speed;
 				}
-				else if (FGInternalHelper::disable_dive)
-				{
-					character->fields._data->fields.diveForce = default_diveForce;
-					character->fields._data->fields.airDiveForce = default_airDiveForce;
+				else if (FGInternalHelper::disable_dive) {
+					character->fields._data->fields.diveForce = VALUES::DEFAULT_VALUES::default_diveForce;
+					character->fields._data->fields.airDiveForce = VALUES::DEFAULT_VALUES::default_airDiveForce;
 					FGInternalHelper::disable_dive = false;
 				}
 
-				if (FGInternal::OTHERS::gravity_enabled)
-				{
-					character->fields._data->fields.gravityScale = FGInternal::OTHERS::gravity_scale;
-
+				if (FGInternal::MOVEMENT::gravity_enabled) {
+					character->fields._data->fields.gravityScale = FGInternal::MOVEMENT::gravity_scale;
 				}
-				else if (FGInternalHelper::disable_gravity)
-				{
-					character->fields._data->fields.gravityScale = default_gravityScale;
+				else if (FGInternalHelper::disable_gravity) {
+					character->fields._data->fields.gravityScale = VALUES::DEFAULT_VALUES::default_gravityScale;
 					FGInternalHelper::disable_gravity = false;
 				}
 			}
-			else 
-			{
-				if (game_level == round_jinxed)
-				{
-					if (FGInternal::ESP::non_jinxed_players_enabled)
-					{
-						if (!character->fields._ActiveTagAccessory_k__BackingField
-							|| std::uintptr_t(character->fields._ActiveTagAccessory_k__BackingField) != std::uintptr_t(character->fields._infectedAccessory)
-							|| !character->fields._ActiveTagAccessory_k__BackingField->fields._isAccessoryEnabled) {
-							vector vec_min, vec_max;
-							if (get_bounding_box2d(character->fields._collider, vec_min, vec_max))
-								draw_manager::add_filled_rect_on_screen(vec_min, vec_max, 0xFFDE3E5B);
+			else {
+				if (game_level == round_jinxed) {
+					if (FGInternal::ESP::non_jinxed_players_enabled) {
+						if (get_character_team_id((uint32_t)player_list->fields.entries->m_Items[i].fields.key) != my_player_team_id) {
+							if (!character->fields._ActiveTagAccessory_k__BackingField
+								|| std::uintptr_t(character->fields._ActiveTagAccessory_k__BackingField) != std::uintptr_t(character->fields._infectedAccessory)
+								|| !character->fields._ActiveTagAccessory_k__BackingField->fields._isAccessoryEnabled) {
+								vector vec_min, vec_max;
+								if (get_bounding_box2d(character->fields._collider, vec_min, vec_max))
+									draw_manager::add_rect_on_screen(vec_min, vec_max, 0xFF652FBD, 0.f, -1, 1.f);
+							}
 						}
 					}
 				}
 			}
 		}
 
-		if (game_level == round_door_dash || game_level == round_tip_toe)
-		{
-			auto gameobjectmanager = *reinterpret_cast<game_object_manager**>( game::unity + signatures::game_object_manager );
-			for ( auto i = gameobjectmanager->active_objects; std::uintptr_t( i ) != std::uintptr_t( &gameobjectmanager->last_active_object ); i = i->next_node ) {
+		if (game_level == round_door_dash || game_level == round_tip_toe || game_level == round_match_fall) {
+			auto gameobjectmanager = *reinterpret_cast<game_object_manager**>(game::unity + signatures::game_object_manager);
+			for (auto i = gameobjectmanager->active_objects; std::uintptr_t(i) != std::uintptr_t(&gameobjectmanager->last_active_object); i = i->next_node) {
 				auto current_object = i->object;
-				if ( current_object ) {
-					auto component_size = *reinterpret_cast<int32_t*>( std::uintptr_t( current_object ) + unity::components_size );
-					auto components_ptr = *reinterpret_cast<uintptr_t*>( std::uintptr_t( current_object ) + unity::components_ptr );
+				if (current_object) {
+					auto component_size = *reinterpret_cast<int32_t*>(std::uintptr_t(current_object) + unity::components_size);
+					auto components_ptr = *reinterpret_cast<uintptr_t*>(std::uintptr_t(current_object) + unity::components_ptr);
 
-					if ( component_size > 1 && components_ptr ) {
+					if (component_size > 1 && components_ptr) {
 						RealDoorController_o* real_door = nullptr;
 						TipToe_Platform_o* tiptoe_platform = nullptr;
-						for ( auto compoment_index = 0; compoment_index < component_size; compoment_index++ ) {
-							auto current_compoment = *reinterpret_cast<uintptr_t*>( components_ptr + ( compoment_index * 0x10 ) + 0x8 );
-							if ( !current_compoment )
+						MatchFallManager_o* match_fall_manager = nullptr;
+
+						for (auto compoment_index = 0; compoment_index < component_size; compoment_index++) {
+							auto current_compoment = *reinterpret_cast<uintptr_t*>(components_ptr + (compoment_index * 0x10) + 0x8);
+							if (!current_compoment)
 								continue;
-							auto compoment_mono = *reinterpret_cast<Il2CppObject**>( current_compoment + unity::mono_ptr );
-							if ( !compoment_mono || reinterpret_cast<Il2CppClass*>( compoment_mono->klass ) != compoment_mono->klass->_1.klass )
+							auto compoment_mono = *reinterpret_cast<Il2CppObject**>(current_compoment + unity::mono_ptr);
+							if (!compoment_mono || reinterpret_cast<Il2CppClass*>(compoment_mono->klass) != compoment_mono->klass->_1.klass)
 								continue;
 
-							auto class_name = fnv::hash_runtime( compoment_mono->klass->_1.name );
+							auto class_name = fnv::hash_runtime(compoment_mono->klass->_1.name);
 
-							switch ( class_name ) {
-								case fnv::hash_constexpr( "RealDoorController" ):
-									real_door = reinterpret_cast<RealDoorController_o*>( compoment_mono );
-									break;
-								case fnv::hash_constexpr( "TipToe_Platform" ):
-									tiptoe_platform = reinterpret_cast<TipToe_Platform_o*>( compoment_mono );
-									break;
+							switch (class_name) {
+							case fnv::hash_constexpr("RealDoorController"):
+								real_door = reinterpret_cast<RealDoorController_o*>(compoment_mono);
+								break;
+							case fnv::hash_constexpr("TipToe_Platform"):
+								tiptoe_platform = reinterpret_cast<TipToe_Platform_o*>(compoment_mono);
+								break;
+							case fnv::hash_constexpr("MatchFallManager"):
+								match_fall_manager = reinterpret_cast<MatchFallManager_o*>(compoment_mono);
+								break;
 							}
 						}
 
-						if (FGInternal::ESP::correct_doors_enabled)
-						{
-							if (real_door)
-							{
+						if (FGInternal::ESP::correct_doors_enabled) {
+							if (real_door) {
 								if (real_door->fields._hasBroken)
 									continue;
 
 								vector vec_min, vec_max;
 								if (get_bounding_box2d(real_door->fields._wallCollider, vec_min, vec_max))
-									draw_manager::add_rect_on_screen(vec_min, vec_max, 0x589C21, 0.f, -1, 3.f);
+									draw_manager::add_rect_on_screen(vec_min, vec_max, 0xFF589C21, 0.f, -1, 1.f);
 							}
 						}
 
-						if (FGInternal::ESP::correct_path_enabled)
-						{
+						if (FGInternal::ESP::correct_path_enabled) {
 							if (tiptoe_platform) {
 								if (tiptoe_platform->fields._isFakePlatform)
 									continue;
@@ -573,7 +558,23 @@ void update( ) {
 								vector world = get_position(character_transform);
 								vector screen;
 								if (world_to_screen(world, screen))
-									draw_manager::add_filled_rect_on_screen(screen, screen + vector(15, 15), 0xFF652FBD);
+									draw_manager::add_filled_rect_on_screen(screen, screen + vector(15, 15), 0xFFDE3E5B);
+							}
+						}
+
+						if (FGInternal::ESP::correct_platforms_enabled) {
+							if (match_fall_manager) {
+								for (auto j = 0; j < match_fall_manager->fields.Tiles->fields._size; j++) {
+									auto tile = match_fall_manager->fields.Tiles->fields._items->m_Items[j];
+									if (!tile)
+										continue;
+
+									if (tile->fields._tileSurfaceOnObject)
+										reinterpret_cast<void(__stdcall*)(void*, bool, void*)>(game::unity + signatures::game_object_custom_set_active)(tile->fields._tileSurfaceOnObject, true, 0);
+
+									if (tile->fields._tileSurfaceOffObject)
+										reinterpret_cast<void(__stdcall*)(void*, bool, void*)>(game::unity + signatures::game_object_custom_set_active)(tile->fields._tileSurfaceOffObject, false, 0);
+								}
 							}
 						}
 					}
@@ -585,82 +586,82 @@ void update( ) {
 
 ID3D11RenderTargetView* d3d_render_target_view = NULL;
 struct dxgi_present {
-	static long __stdcall hooked( IDXGISwapChain* p_swap_chain, UINT sync_interval, UINT flags ) {
-		std::call_once( init_device, [ & ] ( ) {
-			ImGui::CreateContext( );
-			p_swap_chain->GetDevice( __uuidof( d3d11_device ), reinterpret_cast<void**>( &( d3d11_device ) ) );
-			d3d11_device->GetImmediateContext( &d3d11_device_context );
+	static long __stdcall hooked(IDXGISwapChain* p_swap_chain, UINT sync_interval, UINT flags) {
+		std::call_once(init_device, [&]() {
+			ImGui::CreateContext();
+			p_swap_chain->GetDevice(__uuidof(d3d11_device), reinterpret_cast<void**>(&(d3d11_device)));
+			d3d11_device->GetImmediateContext(&d3d11_device_context);
 
 			ID3D11Texture2D* renderTargetTexture = nullptr;
-			if ( SUCCEEDED( p_swap_chain->GetBuffer( 0, __uuidof( ID3D11Texture2D ), reinterpret_cast<LPVOID*>( &renderTargetTexture ) ) ) ) {
+			if (SUCCEEDED(p_swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<LPVOID*>(&renderTargetTexture)))) {
 				D3D11_RENDER_TARGET_VIEW_DESC desc = {};
-				memset( &desc, 0, sizeof( desc ) );
+				memset(&desc, 0, sizeof(desc));
 				desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 				desc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-				d3d11_device->CreateRenderTargetView( renderTargetTexture, &desc, &d3d_render_target_view );
-				renderTargetTexture->Release( );
+				d3d11_device->CreateRenderTargetView(renderTargetTexture, &desc, &d3d_render_target_view);
+				renderTargetTexture->Release();
 			}
 
-			ImGui::GetIO( ).ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-			ImGui::GetIO( ).ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;
-			ImGui::GetIO( ).ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+			ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+			ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;
+			ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
-			ImGui_ImplWin32_Init( hwnd );
-			ImGui_ImplDX11_Init( d3d11_device, d3d11_device_context );
-			ImGui_ImplDX11_CreateDeviceObjects( );
-			ImGui::StyleColorsDark( );
-			} );
+			ImGui_ImplWin32_Init(hwnd);
+			ImGui_ImplDX11_Init(d3d11_device, d3d11_device_context);
+			ImGui_ImplDX11_CreateDeviceObjects();
+			ImGui::StyleColorsDark();
+			});
 
-		ImGui_ImplDX11_NewFrame( );
-		ImGui_ImplWin32_NewFrame( );
-		ImGui::NewFrame( );
+		ImGui_ImplDX11_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
 
-		draw_manager::begin_rendering( );
+		draw_manager::begin_rendering();
 
-		update( );
+		update();
 
-		menu::update_indicators( );
+		menu::update_indicators();
 
-		draw_manager::end_rendering( );
+		draw_manager::end_rendering();
 
-		if ( render::menu_is_open ) {
-			menu::draw( );
+		if (render::menu_is_open) {
+			menu::draw();
 		}
 
-		menu::update_keys( );
+		menu::update_keys();
 
-		ImGui::Render( );
-		d3d11_device_context->OMSetRenderTargets( 1, &d3d_render_target_view, NULL );
-		ImGui_ImplDX11_RenderDrawData( ImGui::GetDrawData( ) );
-		return m_original( p_swap_chain, sync_interval, flags );
+		ImGui::Render();
+		d3d11_device_context->OMSetRenderTargets(1, &d3d_render_target_view, NULL);
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+		return m_original(p_swap_chain, sync_interval, flags);
 	}
 
-	static decltype( &hooked ) m_original;
+	static decltype(&hooked) m_original;
 };
-decltype( dxgi_present::m_original ) dxgi_present::m_original;
+decltype(dxgi_present::m_original) dxgi_present::m_original;
 
 WNDPROC original_wndproc;
-LRESULT wnd_proc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) {
-	if ( ImGui_ImplWin32_WndProcHandler( hWnd, uMsg, wParam, lParam ) )
+LRESULT wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
 		return true;
 
-	if ( render::menu_is_open )
+	if (render::menu_is_open)
 		return true;
 
-	return CallWindowProcW( original_wndproc, hWnd, uMsg, wParam, lParam );
+	return CallWindowProcW(original_wndproc, hWnd, uMsg, wParam, lParam);
 }
 
-void render::load( ) {
-	auto unity_player = std::uintptr_t( GetModuleHandle( "UnityPlayer.dll" ) );
-	hwnd = FindWindow( nullptr, "FallGuys_client" );
-	original_wndproc = reinterpret_cast<WNDPROC>( SetWindowLongPtrW( hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>( wnd_proc ) ) );
+void render::load() {
+	auto unity_player = std::uintptr_t(GetModuleHandle("UnityPlayer.dll"));
+	hwnd = FindWindow(nullptr, "FallGuys_client");
+	original_wndproc = reinterpret_cast<WNDPROC>(SetWindowLongPtrW(hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(wnd_proc)));
 
-	swap_chain = reinterpret_cast<IDXGISwapChain * ( __stdcall* )( )>( unity_player + signatures::swap_chain )( );
-	swap_chain_vmt = std::make_unique<::vmt_smart_hook>( swap_chain );
-	swap_chain_vmt->apply_hook<dxgi_present>( 8 );
+	swap_chain = reinterpret_cast<IDXGISwapChain * (__stdcall*)()>(unity_player + signatures::swap_chain)();
+	swap_chain_vmt = std::make_unique<::vmt_smart_hook>(swap_chain);
+	swap_chain_vmt->apply_hook<dxgi_present>(8);
 }
 
-void render::unload( ) {
-	SetWindowLongPtrW( hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>( original_wndproc ) );
-	swap_chain_vmt->unhook( );
+void render::unload() {
+	SetWindowLongPtrW(hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(original_wndproc));
+	swap_chain_vmt->unhook();
 }

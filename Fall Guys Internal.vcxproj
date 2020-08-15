@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FG Internal\values.h" />
     <ClInclude Include="FG Internal\console.h" />
     <ClInclude Include="FG Internal\directx_helper.hpp" />
     <ClInclude Include="FG Internal\draw_manager.h" />
