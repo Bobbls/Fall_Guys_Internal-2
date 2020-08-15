@@ -18,17 +18,11 @@ namespace VALUES {
 		};
 
 		namespace CARRY {
-			const int grabCooldowwn_min = 0;
-			const int grabCooldowwn_max = 1;
+			const int carryNormalDropForce_min = 25;
+			const int carryNormalDropForce_max = 75;
 
-			const int carryPickupDuration_min = 0;
-			const int carryPickupDuration_max = 1;
-
-			const int carryDropForce_min = 0;
-			const int carryDropForce_max = 1;
-
-			const int carryDiveDropForce_min = 0;
-			const int carryDiveDropForce_max = 1;
+			const int carryDiveDropForce_min = 75;
+			const int carryDiveDropForce_max = 125;
 		};
 	};
 
@@ -47,6 +41,7 @@ namespace VALUES {
 		const float default_CollisionThreshold = 14.000000f;
 
 		// CARRY
-		const float default_carryPickupDuration = 0.100000f;
+		const float default_carryNormalDropForce = 50.000000f;
+		const float default_carryDiveDropForce = 90.000000f;
 	};
 };

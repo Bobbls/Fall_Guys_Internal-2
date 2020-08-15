@@ -9,11 +9,16 @@
 #include <mutex>
 
 namespace FGInternal {
+	namespace GENERAL {
+		bool hide_corner_text = false;
+	};
+
 	namespace ESP {
 		bool correct_doors_enabled = false;
 		bool correct_path_enabled = false;
 		bool non_jinxed_players_enabled = false;
-		bool correct_platforms_enabled = false;
+		bool show_all_platforms_enabled = false;
+		bool show_player_with_tail = false;
 	};
 
 	namespace MOVEMENT {
@@ -36,16 +41,8 @@ namespace FGInternal {
 	};
 
 	namespace CARRY {
-		bool grabCooldown = false;
-		int grabCooldownBoost = 0;
-
-		bool carryPickupDuration = false;
-		int carryPickupBoost = 0;
-
 		bool carryDropForce = false;
-		int carryDropBoost = 0;
-
-		bool carryDiveDropForce = false;
+		int carryNormalDropBoost = 0;
 		int carryDiveDropBoost = 0;
 	};
 };
@@ -54,20 +51,20 @@ namespace FGInternalHelper {
 	bool disable_correct_doors = false;
 	bool disable_correct_path = false;
 	bool disable_non_jinxed_players = false;
-	bool disable_correct_platforms = false;
+	bool disable_show_all_platforms = false;
+	bool disable_show_player_with_tail = false;
 
 	bool disable_fly = false;
 	bool disable_speed = false;
 	bool disable_dive = false;
 	bool disable_gravity = false;
 
-	bool disable_grabCooldown = false;
-	bool disable_carryPickupDuration = false;
 	bool disable_carryDropForce = false;
 	bool disable_carryDiveDropForce = false;
 }
 
 namespace menu {
+	bool general_tab_active = true;
 	bool esp_tab_active = true;
 	bool boost_tab_active = true;
 	bool collisions_tab_active = true;
@@ -138,14 +135,23 @@ namespace menu {
 			style.Colors[ImGuiCol_SliderGrab] = ImVec4{ 0.f, 128.f / 255.f, 199.f / 255.f, 1.f };
 			});
 
+		ImGui::Begin("general_tab", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
+		ImGui::SetWindowSize({ 250, 0 }, ImGuiCond_Always);
+		draw_tab("General", general_tab_active);
+		if (general_tab_active) {
+			draw_button("HOME > Hide Corner Menu", FGInternal::GENERAL::hide_corner_text);
+		}
+		ImGui::End();
+
 		ImGui::Begin("esp_tab", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 		ImGui::SetWindowSize({ 250, 0 }, ImGuiCond_Always);
 		draw_tab("Visuals", esp_tab_active);
 		if (esp_tab_active) {
-			draw_button("Correct Doors (Doors Rush)", FGInternal::ESP::correct_doors_enabled, &FGInternalHelper::disable_correct_doors);
-			draw_button("Correct Path (TipToe)", FGInternal::ESP::correct_path_enabled, &FGInternalHelper::disable_correct_path);
-			draw_button("Non-Jinxed Players", FGInternal::ESP::non_jinxed_players_enabled, &FGInternalHelper::disable_non_jinxed_players);
-			draw_button("Correct Platforms (Fruits)", FGInternal::ESP::correct_platforms_enabled, &FGInternalHelper::disable_correct_platforms);
+			draw_button("F5 > Correct Doors (Doors Rush)", FGInternal::ESP::correct_doors_enabled, &FGInternalHelper::disable_correct_doors);
+			draw_button("F6 > Correct Path (TipToe)", FGInternal::ESP::correct_path_enabled, &FGInternalHelper::disable_correct_path);
+			draw_button("F7 > Non-Jinxed Players", FGInternal::ESP::non_jinxed_players_enabled, &FGInternalHelper::disable_non_jinxed_players);
+			draw_button("F8 > Correct Platforms (Fruits)", FGInternal::ESP::show_all_platforms_enabled, &FGInternalHelper::disable_show_all_platforms);
+			draw_button("F9 > Show Player With Tail (Final)", FGInternal::ESP::show_player_with_tail, &FGInternalHelper::disable_show_player_with_tail);
 		}
 		ImGui::End();
 
@@ -153,8 +159,8 @@ namespace menu {
 		ImGui::SetWindowSize({ 250, 0 }, ImGuiCond_Always);
 		draw_tab("Collisions", collisions_tab_active);
 		if (collisions_tab_active) {
-			draw_button("Disable Stuns", FGInternal::COLLISIONS::stun_collision);
-			draw_button("Disable Objects Collisions", FGInternal::COLLISIONS::object_collision);
+			draw_button("F10 > Disable Stuns", FGInternal::COLLISIONS::stun_collision);
+			draw_button("F11 > Disable Objects Collisions", FGInternal::COLLISIONS::object_collision);
 		}
 		ImGui::End();
 
@@ -162,29 +168,24 @@ namespace menu {
 		ImGui::SetWindowSize({ 250, 0 }, ImGuiCond_Always);
 		draw_tab("Movement", boost_tab_active);
 		if (boost_tab_active) {
-			draw_button("Flying", FGInternal::MOVEMENT::fly_enabled, &FGInternalHelper::disable_fly);
+			draw_button("F1 > Flying", FGInternal::MOVEMENT::fly_enabled, &FGInternalHelper::disable_fly);
 			draw_slider("Flying Speed", &FGInternal::MOVEMENT::fly_speed, VALUES::SAFE_VALUES::MOVEMENT::fly_speed_min, VALUES::SAFE_VALUES::MOVEMENT::fly_speed_max);
-			draw_button("Movement Speed (Default: 9.5)", FGInternal::MOVEMENT::speed_enabled, &FGInternalHelper::disable_speed);
+			draw_button("F2 > Movement Speed (9.5)", FGInternal::MOVEMENT::speed_enabled, &FGInternalHelper::disable_speed);
 			draw_slider("Speed Boost", &FGInternal::MOVEMENT::speed_boost, VALUES::SAFE_VALUES::MOVEMENT::speed_boost_min, VALUES::SAFE_VALUES::MOVEMENT::speed_boost_max);
-			draw_button("Dive Boost (Default: 16.5)", FGInternal::MOVEMENT::dive_enabled, &FGInternalHelper::disable_dive);
+			draw_button("F3 > Dive Boost (16.5)", FGInternal::MOVEMENT::dive_enabled, &FGInternalHelper::disable_dive);
 			draw_slider("Dive Speed", &FGInternal::MOVEMENT::dive_speed, VALUES::SAFE_VALUES::MOVEMENT::dive_speed_min, VALUES::SAFE_VALUES::MOVEMENT::dive_speed_max);
-			draw_button("Gravity Scale (Default: 1.5)", FGInternal::MOVEMENT::gravity_enabled, &FGInternalHelper::disable_gravity);
+			draw_button("F4 > Gravity Scale (1.5)", FGInternal::MOVEMENT::gravity_enabled, &FGInternalHelper::disable_gravity);
 			draw_slider("Gravitation", &FGInternal::MOVEMENT::gravity_scale, VALUES::SAFE_VALUES::MOVEMENT::gravity_scale_min, VALUES::SAFE_VALUES::MOVEMENT::gravity_scale_max);
 		}
 		ImGui::End();
 
 		ImGui::Begin("carrying_tab", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 		ImGui::SetWindowSize({ 250, 0 }, ImGuiCond_Always);
-		draw_tab("WIP", carrying_tab_active);
+		draw_tab("Carrying Grabbable Items", carrying_tab_active);
 		if (carrying_tab_active) {
-			draw_button("grabCooldown", FGInternal::CARRY::grabCooldown, &FGInternalHelper::disable_grabCooldown);
-			draw_slider("grabCooldownBoost", &FGInternal::CARRY::grabCooldownBoost, VALUES::SAFE_VALUES::CARRY::grabCooldowwn_min, VALUES::SAFE_VALUES::CARRY::grabCooldowwn_max);
-			draw_button("carryPickupDuration", FGInternal::CARRY::carryPickupDuration, &FGInternalHelper::disable_carryPickupDuration);
-			draw_slider("carryPickupBoost", &FGInternal::CARRY::carryPickupBoost, VALUES::SAFE_VALUES::CARRY::carryPickupDuration_min, VALUES::SAFE_VALUES::CARRY::carryPickupDuration_max);
-			draw_button("carryDropForce", FGInternal::CARRY::carryDropForce, &FGInternalHelper::disable_carryDropForce);
-			draw_slider("carryDropBoost", &FGInternal::CARRY::carryDropBoost, VALUES::SAFE_VALUES::CARRY::carryDropForce_min, VALUES::SAFE_VALUES::CARRY::carryDropForce_max);
-			draw_button("carryDiveDropForce", FGInternal::CARRY::carryDiveDropForce, &FGInternalHelper::disable_carryDiveDropForce);
-			draw_slider("carryDiveDropBoost", &FGInternal::CARRY::carryDiveDropBoost, VALUES::SAFE_VALUES::CARRY::carryDiveDropForce_min, VALUES::SAFE_VALUES::CARRY::carryDiveDropForce_max);
+			draw_button("F12 > Item Drop Boost", FGInternal::CARRY::carryDropForce, &FGInternalHelper::disable_carryDropForce);
+			draw_slider("Normal Drop", &FGInternal::CARRY::carryNormalDropBoost, VALUES::SAFE_VALUES::CARRY::carryNormalDropForce_min, VALUES::SAFE_VALUES::CARRY::carryNormalDropForce_max);
+			draw_slider("Dive Drop", &FGInternal::CARRY::carryDiveDropBoost, VALUES::SAFE_VALUES::CARRY::carryDiveDropForce_min, VALUES::SAFE_VALUES::CARRY::carryDiveDropForce_max);
 		}
 		ImGui::End();
 	}
@@ -274,15 +275,29 @@ namespace menu {
 		}
 
 		if (io.KeysDown[VK_F8] && !OldKeysDown[VK_F8]) {
-			FGInternal::ESP::correct_platforms_enabled = !FGInternal::ESP::correct_platforms_enabled;
-			FGInternalHelper::disable_correct_platforms = !FGInternal::ESP::correct_platforms_enabled;
+			FGInternal::ESP::show_all_platforms_enabled = !FGInternal::ESP::show_all_platforms_enabled;
+			FGInternalHelper::disable_show_all_platforms = !FGInternal::ESP::show_all_platforms_enabled;
 		}
 
-		if (io.KeysDown[VK_F9] && !OldKeysDown[VK_F9])
-			FGInternal::COLLISIONS::stun_collision = !FGInternal::COLLISIONS::stun_collision;
+		if (io.KeysDown[VK_F9] && !OldKeysDown[VK_F9]) {
+			FGInternal::ESP::show_player_with_tail = !FGInternal::ESP::show_player_with_tail;
+			FGInternalHelper::disable_show_player_with_tail = !FGInternal::ESP::show_player_with_tail;
+		}
 
 		if (io.KeysDown[VK_F10] && !OldKeysDown[VK_F10])
+			FGInternal::COLLISIONS::stun_collision = !FGInternal::COLLISIONS::stun_collision;
+
+		if (io.KeysDown[VK_F11] && !OldKeysDown[VK_F11])
 			FGInternal::COLLISIONS::object_collision = !FGInternal::COLLISIONS::object_collision;
+
+		if (io.KeysDown[VK_F12] && !OldKeysDown[VK_F12]) {
+			FGInternal::CARRY::carryDropForce = !FGInternal::CARRY::carryDropForce;
+			FGInternalHelper::disable_carryDropForce = !FGInternal::CARRY::carryDropForce;
+		}
+
+		if (io.KeysDown[VK_HOME] && !OldKeysDown[VK_HOME]) {
+			FGInternal::GENERAL::hide_corner_text = !FGInternal::GENERAL::hide_corner_text;
+		}
 
 		if (io.NavInputs[ImGuiNavInput_FocusPrev] > 0.f) {
 			FGInternal::MOVEMENT::speed_enabled = true;
@@ -300,93 +315,13 @@ namespace menu {
 		auto text_size = draw_manager::calc_text_size(12, "TAKE");
 		auto y = float(15);
 
-		draw_manager::add_text_on_screen({ 5, y }, 0xFF4045DB, 14, "ESP Menu - INSERT");
-		y += text_size.y + 4.f;
-
-		//if (FGInternal::MOVEMENT::fly_enabled) {
-		//	draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, "> F1 > Flying Enabled");
-		//	y += text_size.y + 3.f;
-		//} else {
-		//	draw_manager::add_text_on_screen({ 5, y }, 0xFF7E3EDE, 12, "> F1 > Flying Disabled");
-		//	y += text_size.y + 3.f;
-		//}
-		//
-		//if (FGInternal::MOVEMENT::speed_enabled) {
-		//	draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, "> F2 > Movement Speed Enabled");
-		//	y += text_size.y + 3.f;
-		//} else {
-		//	draw_manager::add_text_on_screen({ 5, y }, 0xFF7E3EDE, 12, "> F2 > Movement Speed Disabled");
-		//	y += text_size.y + 3.f;
-		//}
-		//
-		//if (FGInternal::MOVEMENT::dive_enabled) {
-		//	draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, "> F3 > Dive Speed Enabled");
-		//	y += text_size.y + 3.f;
-		//} else {
-		//	draw_manager::add_text_on_screen({ 5, y }, 0xFF7E3EDE, 12, "> F3 > Dive Speed Disabled");
-		//	y += text_size.y + 3.f;
-		//}
-		//
-		//if (FGInternal::MOVEMENT::gravity_enabled) {
-		//	draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, "> F4 > Gravity Scale Enabled");
-		//	y += text_size.y + 3.f;
-		//} else {
-		//	draw_manager::add_text_on_screen({ 5, y }, 0xFF7E3EDE, 12, "> F4 > Gravity Scale Disabled");
-		//	y += text_size.y + 3.f;
-		//}
-		//
-		///////////////////
-		//
-		//if (FGInternal::ESP::correct_doors_enabled) {
-		//	draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, "> F5 > Correct Doors Shown");
-		//	y += text_size.y + 3.f;
-		//} else {
-		//	draw_manager::add_text_on_screen({ 5, y }, 0xFF7E3EDE, 12, "> F5 > Correct Doors Hidden");
-		//	y += text_size.y + 3.f;
-		//}
-		//
-		//if (FGInternal::ESP::correct_path_enabled) {
-		//	draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, "> F6 > Correct Path Shown");
-		//	y += text_size.y + 3.f;
-		//} else {
-		//	draw_manager::add_text_on_screen({ 5, y }, 0xFF7E3EDE, 12, "> F6 > Correct Path Hidden");
-		//	y += text_size.y + 3.f;
-		//}
-		//
-		//if (FGInternal::ESP::non_jinxed_players_enabled) {
-		//	draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, "> F7 > Non-Jinxed Players Shown");
-		//	y += text_size.y + 3.f;
-		//}
-		//else {
-		//	draw_manager::add_text_on_screen({ 5, y }, 0xFF7E3EDE, 12, "> F7 > Non-Jinxed Players Hidden");
-		//	y += text_size.y + 3.f;
-		//}
-
-		//if (FGInternal::ESP::correct_platforms_enabled) {
-		//	draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, "> F8 > Correct Platforms Shown");
-		//	y += text_size.y + 3.f;
-		//}
-		//else {
-		//	draw_manager::add_text_on_screen({ 5, y }, 0xFF7E3EDE, 12, "> F8 > Correct Platforms Hidden");
-		//	y += text_size.y + 3.f;
-		//}
-
-		////////////////////////
-
-		//if (FGInternal::COLLISIONS::stun_collision) {
-		//	draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, "> F9 > Stun Collisions Disabled");
-		//	y += text_size.y + 3.f;
-		//} else {
-		//	draw_manager::add_text_on_screen({ 5, y }, 0xFF7E3EDE, 12, "> F9 > Stun Collisions Enabled");
-		//	y += text_size.y + 3.f;
-		//}
-		//
-		//if (FGInternal::COLLISIONS::object_collision) {
-		//	draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, "> F10 > Object Collisions Disabled");
-		//	y += text_size.y + 3.f;
-		//} else {
-		//	draw_manager::add_text_on_screen({ 5, y }, 0xFF7E3EDE, 12, "> F10 > Object Collisions Enabled");
-		//	y += text_size.y + 3.f;
-		//}
+		if (!FGInternal::GENERAL::hide_corner_text) {
+			draw_manager::add_text_on_screen({ 5, y }, 0xFF4045DB, 14, "FG Internal");
+			y += text_size.y + 4.f;
+			draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, "> INSERT > Open Cheat Menu");
+			y += text_size.y + 4.f;
+			draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, "> HOME > Hide Corner Text");
+			y += text_size.y + 4.f;
+		}
 	}
 };

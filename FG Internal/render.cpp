@@ -480,6 +480,16 @@ void update() {
 					character->fields._data->fields.gravityScale = VALUES::DEFAULT_VALUES::default_gravityScale;
 					FGInternalHelper::disable_gravity = false;
 				}
+
+				if (FGInternal::CARRY::carryDropForce) {
+					character->fields._data->fields.carryNormalDropForce = FGInternal::CARRY::carryNormalDropBoost;
+					character->fields._data->fields.carryDiveDropForce = FGInternal::CARRY::carryDiveDropBoost;
+				}
+				else if (FGInternalHelper::disable_carryDropForce) {
+					character->fields._data->fields.carryNormalDropForce = VALUES::DEFAULT_VALUES::default_carryNormalDropForce;
+					character->fields._data->fields.carryDiveDropForce = VALUES::DEFAULT_VALUES::default_carryDiveDropForce;
+					FGInternalHelper::disable_carryDropForce = false;
+				}
 			}
 			else {
 				if (game_level == round_jinxed) {
@@ -562,7 +572,7 @@ void update() {
 							}
 						}
 
-						if (FGInternal::ESP::correct_platforms_enabled) {
+						if (FGInternal::ESP::show_all_platforms_enabled) {
 							if (match_fall_manager) {
 								for (auto j = 0; j < match_fall_manager->fields.Tiles->fields._size; j++) {
 									auto tile = match_fall_manager->fields.Tiles->fields._items->m_Items[j];

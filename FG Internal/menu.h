@@ -2,11 +2,16 @@
 #include <Windows.h>
 
 namespace FGInternal {
+	namespace GENERAL {
+		extern bool hide_corner_text;
+	};
+
 	namespace ESP {
 		extern bool correct_doors_enabled;
 		extern bool correct_path_enabled;
 		extern bool non_jinxed_players_enabled;
-		extern bool correct_platforms_enabled;
+		extern bool show_all_platforms_enabled;
+		extern bool show_player_with_tail;
 	};
 
 	namespace MOVEMENT {
@@ -29,16 +34,8 @@ namespace FGInternal {
 	};
 
 	namespace CARRY {
-		extern bool grabCooldown;
-		extern int grabCooldownBoost;
-
-		extern bool carryPickupDuration;
-		extern int carryPickupBoost;
-
 		extern bool carryDropForce;
-		extern int carryDropBoost;
-
-		extern bool carryDiveDropForce;
+		extern int carryNormalDropBoost;
 		extern int carryDiveDropBoost;
 	};
 };
@@ -47,17 +44,15 @@ namespace FGInternalHelper {
 	extern bool disable_correct_doors;
 	extern bool disable_correct_path;
 	extern bool disable_non_jinxed_players;
-	extern bool disable_correct_platforms;
+	extern bool disable_show_all_platforms;
+	extern bool disable_show_player_with_tail;
 
 	extern bool disable_fly;
 	extern bool disable_speed;
 	extern bool disable_dive;
 	extern bool disable_gravity;
 
-	extern bool disable_grabCooldown;
-	extern bool disable_carryPickupDuration;
 	extern bool disable_carryDropForce;
-	extern bool disable_carryDiveDropForce;
 };
 
 namespace menu { 
