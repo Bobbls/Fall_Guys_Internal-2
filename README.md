@@ -6,7 +6,7 @@ Fall Guys - Advanced Internal Cheat - 1.2 - 15.08.2020
 ## How to:
 - Check the publication date of the latest public branch (https://steamdb.info/app/1097150/depots/)
   - If it's the same as the version the internal fits, then continue
-  - If it's not the same, go to https://github.com/xTeJk/Fall_Guys_Intenral#offsets and update the offsets
+  - If it's not the same, go to https://github.com/xTeJk/Fall_Guys_Internal#offsets and update the offsets
 - Start game in any configuration
 - Inject cheat with Xenos (Native Inject / Existing Process)
 - Press `INSERT` to open cheat menu
