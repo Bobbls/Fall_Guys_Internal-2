@@ -1,4 +1,4 @@
-# Fall Guys Internal
+![logo](https://i.imgur.com/gDbunES.png)
 Fall Guys - Advanced Internal Cheat - 1.2 - 15.08.2020  
 [![Discord](https://discordapp.com/api/guilds/370909694056726528/widget.png?style=shield)](https://discord.gg/jqbq85J)
   
