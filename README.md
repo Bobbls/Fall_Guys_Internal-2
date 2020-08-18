@@ -3,6 +3,11 @@ Fall Guys - Advanced Internal Cheat - 1.2_2 - 18.08.2020
 [![Discord](https://discordapp.com/api/guilds/370909694056726528/widget.png?style=shield)](https://discord.gg/jqbq85J)
   
   
+## Beginning:
+- A good way to get to know the cheat and its files and all the stuff related to it is  
+by checking the wiki entries for answers to the most important questions.  
+[https://github.com/xTeJk/Fall_Guys_Internal/wiki](https://github.com/xTeJk/Fall_Guys_Internal/wiki)
+  
 ## How to:
 - Check the publication date of the latest public branch (https://steamdb.info/app/1097150/depots/)
   - If it's the same as the version the internal fits, then continue
