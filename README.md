@@ -1,5 +1,5 @@
-# Fall Guys Internal
-Fall Guys - Advanced Internal Cheat - 1.2 - 15.08.2020  
+![logo](https://i.imgur.com/gDbunES.png)  
+Fall Guys - Advanced Internal Cheat - 1.2_1 - 18.08.2020  
 [![Discord](https://discordapp.com/api/guilds/370909694056726528/widget.png?style=shield)](https://discord.gg/jqbq85J)
   
   
@@ -8,13 +8,14 @@ Fall Guys - Advanced Internal Cheat - 1.2 - 15.08.2020
   - If it's the same as the version the internal fits, then continue
   - If it's not the same, go to https://github.com/xTeJk/Fall_Guys_Internal#offsets and update the offsets
 - Start game in any configuration
-- Inject cheat with Xenos (Native Inject / Existing Process)
+- Inject cheat with [Xenos](https://github.com/DarthTon/Xenos/releases/download/2.3.2/Xenos_2.3.2.7z) (Native Inject / Existing Process)
 - Press `INSERT` to open cheat menu
 - Don't close console window!
 
 ## Compilation:
 - VS 2019 / v142 / .dll library
-  - Use multi-byte character set
+  - [Properties -> Advanced] -> Use multi-byte character set
+  - [Properties -> C/C++ -> Preprocessor -> Definitions] -> `_CRT_SECURE_NO_WARNINGS`
 - Compile as `Release x64` version
 
 ## Offsets:
@@ -41,7 +42,7 @@ they can be edited in the `values.h` file, but it's not recommended,
 because exceeding the recommended value may result in blocking the account.
 
 ## Visuals Colors
-To edit the color of the visuals, search for `0xFF` in `render.cpp ` 
+To edit the color of the visuals, search for `0xFF` in `render.cpp`  
 and change the code after that phrase to your own RGB code, eg.:  
 `0xFF589C21` (Green)  
 replace to:  
@@ -52,25 +53,36 @@ All functions are possible for any configuration
   
 - GENERAL:
   - HOME > Hide Corner Text
+  - DELETE > Panic Key (instantly closes game)
+  - END > Unhook Cheat (disable cheat, keep game alive)
+  - Disable Safe Cheat Values
 - VISUALS:
   - F5 > Real Doors (Door Rush)
   - F6 > Real Path (Tip Toe)
   - F7 > Non-Jinxed Players
-  - F8 > Show all platforms (Fruit Match)
-  - F9 > Show player with tail (Final - WIP)
+  - F8 > All Platforms Visible (Fall Match / Fruits Match)
+  - F9 > Player with Tail (Final)
 - MOVEMENT:
-  - F1 > Fly Mode
-  - F2 > Speed Hack (Default (9.5)
-  - F3 > Dive Boost (Default: 16.5)
-  - F4 > Gravity Scale (Default: 1.5)
+  - F1 > Fly Mode:
+    - Flying Speed
+  - F2 > Speed Hack:
+    - Movement Speed (Default: 9.5)
+	- Movement Speed when Carrying Item (Default: 8)
+	- Movement Speed when Grabbing (Default: 5)
+  - F3 > Dive Boost:
+    - Normal Dive Boost (Default: 16.5)
+	- Air Dive Boost (Default: 7)
+  - F4 > Gravity Scale:
+    - Gravitation (Default: 1.5)
 - COLLISIONS:
-  - F10 > Disable Stuns
+  - F10 > Disable Stuns/Knockdowns
   - F11 > Disable Object Collisions
 - CARRYING GRABBABLE ITEMS:
-  - Normal Item Drop Force (Default: 50)
-  - Dive Item Drop Force (Default: 90)
+  - Item Drop Force:
+  - Normal Item Drop (Default: 50)
+  - Dive Item Drop (Default: 90)
   
-![1](https://i.gyazo.com/0d26cb65308a04f29906a1cd7adb49fb.png)
+![1](https://i.imgur.com/LeH8RWz.png)
 ![2](https://media.giphy.com/media/lMyPbfquGuXZtp4xo6/giphy.gif)
 ![3](https://media.giphy.com/media/WU6FJLsf7eIkbgDpMc/giphy.gif)
 ![4](https://media.giphy.com/media/WoR2PCgTLjCTAyA7tT/giphy.gif)

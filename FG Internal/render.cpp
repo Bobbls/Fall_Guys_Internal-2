@@ -445,9 +445,6 @@ void update() {
 				character->fields._data->fields.dynamicCollisionStunForce = FGInternal::COLLISIONS::stun_collision ? FLT_MAX : VALUES::DEFAULT_VALUES::default_dynamicCollisionStunForce;
 				character->fields._ragdollController->fields.CollisionThreshold = FGInternal::COLLISIONS::object_collision ? FLT_MAX : VALUES::DEFAULT_VALUES::default_CollisionThreshold;
 
-				//add option in menu
-				//character->fields._data->fields.carryPickupDuration = 0.f;
-
 				if (FGInternal::COLLISIONS::object_collision)
 					character->fields._ragdollController->fields.CollisionUpperBodyTransfer = 0.f;
 
@@ -464,8 +461,8 @@ void update() {
 				}
 
 				if (FGInternal::MOVEMENT::dive_enabled) {
-					character->fields._data->fields.diveForce = FGInternal::MOVEMENT::dive_speed;
-					character->fields._data->fields.airDiveForce = FGInternal::MOVEMENT::dive_speed;
+					character->fields._data->fields.diveForce = FGInternal::MOVEMENT::normalDive_speed;
+					character->fields._data->fields.airDiveForce = FGInternal::MOVEMENT::airDive_speed;
 				}
 				else if (FGInternalHelper::disable_dive) {
 					character->fields._data->fields.diveForce = VALUES::DEFAULT_VALUES::default_diveForce;
@@ -584,6 +581,44 @@ void update() {
 
 									if (tile->fields._tileSurfaceOffObject)
 										reinterpret_cast<void(__stdcall*)(void*, bool, void*)>(game::unity + signatures::game_object_custom_set_active)(tile->fields._tileSurfaceOffObject, false, 0);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		if (GetAsyncKeyState(0x4D)) {
+			printf("MAP: %ws\n", instance->fields._GameStateView_k__BackingField->fields.CurrentGameLevelName->fields.c_str);
+			auto gameobjectmanager = *reinterpret_cast<game_object_manager**>(game::unity + signatures::game_object_manager);
+			for (auto i = gameobjectmanager->active_objects; std::uintptr_t(i) != std::uintptr_t(&gameobjectmanager->last_active_object); i = i->next_node) {
+				auto current_object = i->object;
+				if (current_object) {
+					auto component_size = *reinterpret_cast<int32_t*>(std::uintptr_t(current_object) + unity::components_size);
+					auto components_ptr = *reinterpret_cast<uintptr_t*>(std::uintptr_t(current_object) + unity::components_ptr);
+					if (component_size > 1 && components_ptr) {
+						for (auto compoment_index = 0; compoment_index < component_size; compoment_index++) {
+							auto current_compoment = *reinterpret_cast<uintptr_t*>(components_ptr + (compoment_index * 0x10) + 0x8);
+							if (!current_compoment)
+								continue;
+							auto compoment_mono = *reinterpret_cast<Il2CppObject**>(current_compoment + unity::mono_ptr);
+							if (!compoment_mono || reinterpret_cast<Il2CppClass*>(compoment_mono->klass) != compoment_mono->klass->_1.klass)
+								continue;
+							auto class_name = fnv::hash_runtime(compoment_mono->klass->_1.name);
+						}
+					}
+					auto transform = *reinterpret_cast<uintptr_t*>(std::uintptr_t(current_object) + unity::components_ptr);
+					if (transform) {
+						transform = *reinterpret_cast<uintptr_t*>(transform + unity::transform_compoment);
+						if (transform) {
+							auto transform_mono = *reinterpret_cast<UnityEngine_Transform_o**>(transform + unity::mono_ptr);
+							if (transform_mono) {
+								if (!strstr(transform_mono->klass->_1.name, "Rect")) {
+									auto position = get_position(transform);
+									auto screen = vector();
+									if (world_to_screen(position, screen)) {
+										draw_manager::add_text_on_screen(screen, ImColor(0.f, 0.f, 0.f), 19, "%s", current_object->get_name());
+									}
 								}
 							}
 						}

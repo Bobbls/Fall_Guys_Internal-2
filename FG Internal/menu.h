@@ -4,6 +4,7 @@
 namespace FGInternal {
 	namespace GENERAL {
 		extern bool hide_corner_text;
+		extern bool disable_safe_values;
 	};
 
 	namespace ESP {
@@ -16,16 +17,17 @@ namespace FGInternal {
 
 	namespace MOVEMENT {
 		extern bool fly_enabled;
-		extern int fly_speed;
+		extern float fly_speed;
 
 		extern bool speed_enabled;
-		extern int speed_boost;
+		extern float speed_boost;
 
 		extern bool dive_enabled;
-		extern int dive_speed;
+		extern float normalDive_speed;
+		extern float airDive_speed;
 
 		extern bool gravity_enabled;
-		extern int gravity_scale;
+		extern float gravity_scale;
 	};
 
 	namespace COLLISIONS {
@@ -35,8 +37,8 @@ namespace FGInternal {
 
 	namespace CARRY {
 		extern bool carryDropForce;
-		extern int carryNormalDropBoost;
-		extern int carryDiveDropBoost;
+		extern float carryNormalDropBoost;
+		extern float carryDiveDropBoost;
 	};
 };
 
@@ -56,7 +58,7 @@ namespace FGInternalHelper {
 };
 
 namespace menu { 
-	void draw( );
-	void update_keys( );
-	void update_indicators( );
+	void draw();
+	void update_keys();
+	void update_indicators();
 };

@@ -4,25 +4,27 @@
 namespace VALUES {
 	namespace SAFE_VALUES {
 		namespace MOVEMENT {
-			const int fly_speed_min = 10;
-			const int fly_speed_max = 25;
+			const float fly_speed_min = 10;
+			const float fly_speed_max = 25;
 
-			const int speed_boost_min = 5;
-			const int speed_boost_max = 15;
+			const float speed_boost_min = 5;
+			const float speed_boost_max = 15;
 
-			const int dive_speed_min = 15;
-			const int dive_speed_max = 50;
+			const float normalDive_speed_min = 15;
+			const float normalDive_speed_max = 50;
+			const float airDive_speed_min = 5;
+			const float airDive_speed_max = 25;
 
-			const int gravity_scale_min = 0;
-			const int gravity_scale_max = 5;
+			const float gravity_scale_min = 0;
+			const float gravity_scale_max = 5;
 		};
 
 		namespace CARRY {
-			const int carryNormalDropForce_min = 25;
-			const int carryNormalDropForce_max = 75;
+			const float carryNormalDropForce_min = 25;
+			const float carryNormalDropForce_max = 75;
 
-			const int carryDiveDropForce_min = 75;
-			const int carryDiveDropForce_max = 125;
+			const float carryDiveDropForce_min = 75;
+			const float carryDiveDropForce_max = 125;
 		};
 	};
 
