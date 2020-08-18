@@ -27,7 +27,9 @@ namespace FGInternal {
 		float fly_speed = 15;
 
 		bool speed_enabled = false;
-		float speed_boost = 12;
+		float ms_normal_boost = 12;
+		float ms_carry_boost = 10;
+		float ms_grabbing_boost = 8;
 
 		bool dive_enabled = false;
 		float normalDive_speed = 25;
@@ -153,7 +155,7 @@ namespace menu {
 
 		ImGui::Begin("general_tab", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 		ImGui::SetWindowSize({ 250, 0 }, ImGuiCond_Always);
-		draw_tab(u8"» GENERAL «", general_tab_active);
+		draw_tab(u8"» GENERAL TAB «", general_tab_active);
 		if (general_tab_active) {
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
 			ImGui::Text(u8"HOME » Hide Corner Menu");
@@ -172,7 +174,7 @@ namespace menu {
 
 		ImGui::Begin("visuals_tab", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 		ImGui::SetWindowSize({ 250, 0 }, ImGuiCond_Always);
-		draw_tab(u8"» VISUALS «", esp_tab_active);
+		draw_tab(u8"» VISUALS TAB «", esp_tab_active);
 		if (esp_tab_active) {
 			ImGui::Text(u8"F5 » Doors Rush");
 			draw_button("Correct Doors", FGInternal::ESP::correct_doors_enabled, &FGInternalHelper::disable_correct_doors);
@@ -193,7 +195,7 @@ namespace menu {
 
 		ImGui::Begin("collisions_tab", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 		ImGui::SetWindowSize({ 250, 0 }, ImGuiCond_Always);
-		draw_tab(u8"» COLLISIONS «", collisions_tab_active);
+		draw_tab(u8"» COLLISIONS TAB «", collisions_tab_active);
 		if (collisions_tab_active) {
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
 			ImGui::Text(u8"F10 » Stuns/Knockdowns");
@@ -214,8 +216,10 @@ namespace menu {
 			draw_slider("Flying Speed", &FGInternal::MOVEMENT::fly_speed, VALUES::SAFE_VALUES::MOVEMENT::fly_speed_min, VALUES::SAFE_VALUES::MOVEMENT::fly_speed_max);
 			ImGui::Dummy(ImVec2(0.0f, 5.0f));
 			ImGui::Text(u8"F2 » [W] » Speed Hack");
-			draw_button("Movement Speed", FGInternal::MOVEMENT::speed_enabled, &FGInternalHelper::disable_speed);
-			draw_slider("Speed Boost", &FGInternal::MOVEMENT::speed_boost, VALUES::SAFE_VALUES::MOVEMENT::speed_boost_min, VALUES::SAFE_VALUES::MOVEMENT::speed_boost_max);
+			draw_button("Movement Speed Boost", FGInternal::MOVEMENT::speed_enabled, &FGInternalHelper::disable_speed);
+			draw_slider("Normal Speed", &FGInternal::MOVEMENT::ms_normal_boost, VALUES::SAFE_VALUES::MOVEMENT::ms_normal_min, VALUES::SAFE_VALUES::MOVEMENT::ms_normal_max);
+			draw_slider("Carrying Speed", &FGInternal::MOVEMENT::ms_carry_boost, VALUES::SAFE_VALUES::MOVEMENT::ms_carry_min, VALUES::SAFE_VALUES::MOVEMENT::ms_carry_max);
+			draw_slider("Grabbing Speed", &FGInternal::MOVEMENT::ms_grabbing_boost, VALUES::SAFE_VALUES::MOVEMENT::ms_grabbing_min, VALUES::SAFE_VALUES::MOVEMENT::ms_grabbing_max);
 			ImGui::Dummy(ImVec2(0.0f, 5.0f));
 			ImGui::Text(u8"F3 » [CTRL/RMB] » Dive");
 			draw_button("Dive Boost", FGInternal::MOVEMENT::dive_enabled, &FGInternalHelper::disable_dive);
@@ -232,8 +236,10 @@ namespace menu {
 			draw_slider("Flying Speed", &FGInternal::MOVEMENT::fly_speed, 0, 2137);
 			ImGui::Dummy(ImVec2(0.0f, 5.0f));
 			ImGui::Text(u8"F2 » [W] » Speed Hack");
-			draw_button("Movement Speed", FGInternal::MOVEMENT::speed_enabled, &FGInternalHelper::disable_speed);
-			draw_slider("Speed Boost", &FGInternal::MOVEMENT::speed_boost, 0, 2137);
+			draw_button("Movement Speed Boost", FGInternal::MOVEMENT::speed_enabled, &FGInternalHelper::disable_speed);
+			draw_slider("Normal Speed", &FGInternal::MOVEMENT::ms_normal_boost, 0, 2137);
+			draw_slider("Carrying Speed", &FGInternal::MOVEMENT::ms_carry_boost, 0, 2137);
+			draw_slider("Grabbing Speed", &FGInternal::MOVEMENT::ms_grabbing_boost, 0, 2137);
 			ImGui::Dummy(ImVec2(0.0f, 5.0f));
 			ImGui::Text(u8"F3 » [CTRL/RMB] » Dive");
 			draw_button("Dive Boost", FGInternal::MOVEMENT::dive_enabled, &FGInternalHelper::disable_dive);
@@ -248,7 +254,7 @@ namespace menu {
 
 		ImGui::Begin("carrying_tab", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 		ImGui::SetWindowSize({ 250, 0 }, ImGuiCond_Always);
-		draw_tab(u8"» CARRYING ITEMS «", carrying_tab_active);
+		draw_tab(u8"» CARRYING ITEMS TAB «", carrying_tab_active);
 		if (carrying_tab_active && !FGInternal::GENERAL::disable_safe_values) {
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
 			ImGui::Text(u8"F12 » [SHIFT] » Drop Boost");

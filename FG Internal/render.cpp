@@ -449,9 +449,9 @@ void update() {
 					character->fields._ragdollController->fields.CollisionUpperBodyTransfer = 0.f;
 
 				if (FGInternal::MOVEMENT::speed_enabled) {
-					character->fields._data->fields.normalMaxSpeed = FGInternal::MOVEMENT::speed_boost;
-					character->fields._data->fields.carryMaxSpeed = FGInternal::MOVEMENT::speed_boost;
-					character->fields._data->fields.grabbingMaxSpeed = FGInternal::MOVEMENT::speed_boost;
+					character->fields._data->fields.normalMaxSpeed = FGInternal::MOVEMENT::ms_normal_boost;
+					character->fields._data->fields.carryMaxSpeed = FGInternal::MOVEMENT::ms_carry_boost;
+					character->fields._data->fields.grabbingMaxSpeed = FGInternal::MOVEMENT::ms_grabbing_boost;
 				}
 				else if (FGInternalHelper::disable_speed) {
 					character->fields._data->fields.normalMaxSpeed = VALUES::DEFAULT_VALUES::default_max_speed;

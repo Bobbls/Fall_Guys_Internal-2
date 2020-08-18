@@ -20,7 +20,9 @@ namespace FGInternal {
 		extern float fly_speed;
 
 		extern bool speed_enabled;
-		extern float speed_boost;
+		extern float ms_normal_boost;
+		extern float ms_carry_boost;
+		extern float ms_grabbing_boost;
 
 		extern bool dive_enabled;
 		extern float normalDive_speed;

@@ -7,8 +7,14 @@ namespace VALUES {
 			const float fly_speed_min = 10;
 			const float fly_speed_max = 25;
 
-			const float speed_boost_min = 5;
-			const float speed_boost_max = 15;
+			const float ms_normal_min = 5;
+			const float ms_normal_max = 15;
+
+			const float ms_carry_min = 5;
+			const float ms_carry_max = 15;
+
+			const float ms_grabbing_min = 5;
+			const float ms_grabbing_max = 15;
 
 			const float normalDive_speed_min = 15;
 			const float normalDive_speed_max = 50;

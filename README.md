@@ -1,5 +1,5 @@
 ![logo](https://i.imgur.com/gDbunES.png)  
-Fall Guys - Advanced Internal Cheat - 1.2_1 - 18.08.2020  
+Fall Guys - Advanced Internal Cheat - 1.2_2 - 18.08.2020  
 [![Discord](https://discordapp.com/api/guilds/370909694056726528/widget.png?style=shield)](https://discord.gg/jqbq85J)
   
   
@@ -52,37 +52,37 @@ replace to:
 All functions are possible for any configuration  
   
 - GENERAL:
-  - HOME > Hide Corner Text
-  - DELETE > Panic Key (instantly closes game)
-  - END > Unhook Cheat (disable cheat, keep game alive)
+  - HOME » Hide Corner Text
+  - DELETE » Panic Key (instantly closes game)
+  - END » Unhook Cheat (disable cheat, keep game alive)
   - Disable Safe Cheat Values
 - VISUALS:
-  - F5 > Real Doors (Door Rush)
-  - F6 > Real Path (Tip Toe)
-  - F7 > Non-Jinxed Players
-  - F8 > All Platforms Visible (Fall Match / Fruits Match)
-  - F9 > Player with Tail (Final)
+  - F5 » Real Doors (Door Rush)
+  - F6 » Real Path (Tip Toe)
+  - F7 » Non-Jinxed Players
+  - F8 » All Platforms Visible (Fall Match / Fruits Match)
+  - F9 » Player with Tail (Final)
 - MOVEMENT:
-  - F1 > Fly Mode:
+  - F1 » Fly Mode:
     - Flying Speed
-  - F2 > Speed Hack:
+  - F2 » Speed Hack:
     - Movement Speed (Default: 9.5)
 	- Movement Speed when Carrying Item (Default: 8)
 	- Movement Speed when Grabbing (Default: 5)
-  - F3 > Dive Boost:
+  - F3 » Dive Boost:
     - Normal Dive Boost (Default: 16.5)
 	- Air Dive Boost (Default: 7)
-  - F4 > Gravity Scale:
-    - Gravitation (Default: 1.5)
+  - F4 » Gravitation:
+    - Gravity Scale (Default: 1.5)
 - COLLISIONS:
-  - F10 > Disable Stuns/Knockdowns
-  - F11 > Disable Object Collisions
+  - F10 » Disable Stuns/Knockdowns
+  - F11 » Disable Object Collisions
 - CARRYING GRABBABLE ITEMS:
   - Item Drop Force:
   - Normal Item Drop (Default: 50)
   - Dive Item Drop (Default: 90)
   
-![1](https://i.imgur.com/LeH8RWz.png)
+![1](https://i.imgur.com/y5sjk8e.png)
 ![2](https://media.giphy.com/media/lMyPbfquGuXZtp4xo6/giphy.gif)
 ![3](https://media.giphy.com/media/WU6FJLsf7eIkbgDpMc/giphy.gif)
 ![4](https://media.giphy.com/media/WoR2PCgTLjCTAyA7tT/giphy.gif)
