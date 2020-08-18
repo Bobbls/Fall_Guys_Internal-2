@@ -52,35 +52,35 @@ replace to:
 All functions are possible for any configuration  
   
 - GENERAL:
-  - HOME » Hide Corner Text
-  - DELETE » Panic Key (instantly closes game)
-  - END » Unhook Cheat (disable cheat, keep game alive)
+  - HOME Â» Hide Corner Text
+  - DELETE Â» Panic Key (instantly closes game)
+  - END Â» Unhook Cheat (disable cheat, keep game alive)
   - Disable Safe Cheat Values
 - VISUALS:
-  - F5 » Real Doors (Door Rush)
-  - F6 » Real Path (Tip Toe)
-  - F7 » Non-Jinxed Players
-  - F8 » All Platforms Visible (Fall Match / Fruits Match)
-  - F9 » Player with Tail (Final)
+  - F5 Â» Real Doors (Door Rush)
+  - F6 Â» Real Path (Tip Toe)
+  - F7 Â» Non-Jinxed Players
+  - F8 Â» All Platforms Visible (Fall Match / Fruits Match)
+  - F9 Â» Player with Tail (Final)
 - MOVEMENT:
-  - F1 » Fly Mode:
+  - F1 Â» Fly Mode:
     - Flying Speed
-  - F2 » Speed Hack:
+  - F2 Â» Speed Hack:
     - Movement Speed (Default: 9.5)
 	- Movement Speed when Carrying Item (Default: 8)
 	- Movement Speed when Grabbing (Default: 5)
-  - F3 » Dive Boost:
+  - F3 Â» Dive Boost:
     - Normal Dive Boost (Default: 16.5)
 	- Air Dive Boost (Default: 7)
-  - F4 » Gravitation:
+  - F4 Â» Gravitation:
     - Gravity Scale (Default: 1.5)
 - COLLISIONS:
-  - F10 » Disable Stuns/Knockdowns
-  - F11 » Disable Object Collisions
+  - F10 Â» Disable Stuns/Knockdowns
+  - F11 Â» Disable Object Collisions
 - CARRYING GRABBABLE ITEMS:
   - Item Drop Force:
-  - Normal Item Drop (Default: 50)
-  - Dive Item Drop (Default: 90)
+    - Normal Item Drop (Default: 50)
+    - Dive Item Drop (Default: 90)
   
 ![1](https://i.imgur.com/y5sjk8e.png)
 ![2](https://media.giphy.com/media/lMyPbfquGuXZtp4xo6/giphy.gif)
