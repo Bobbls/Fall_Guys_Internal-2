@@ -304,7 +304,7 @@ void update() {
 		cursor_manager->static_fields->_Instance_k__BackingField->fields.usingKeyboard = true;
 		cursor_manager->static_fields->_Instance_k__BackingField->fields.cursorVisible = true;
 	}
-	re_input->static_fields->HQLaKohzXRajMoKwSNuhmhfTAmCU = render::menu_is_open; //Rewired_ReInput__get_inputAllowed
+	re_input->static_fields->lnEYEzJPkNArQCiSclJonUOvZDE = render::menu_is_open; //Rewired_ReInput__get_inputAllowed
 
 	auto global = *reinterpret_cast<MPG_Utility_Singleton_GlobalGameStateClient__c**>(game::game + signatures::global_game_state);
 	if (!global)
