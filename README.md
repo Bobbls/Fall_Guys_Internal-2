@@ -1,5 +1,5 @@
 ![logo](https://i.imgur.com/gDbunES.png)  
-Fall Guys - Advanced Internal Cheat - 1.2_4 - 19.08.2020  
+Fall Guys - Free Advanced Internal Cheat - 1.2_4 - 19.08.2020  
 [![Discord](https://discordapp.com/api/guilds/370909694056726528/widget.png?style=shield)](https://discord.gg/jqbq85J)
   
   
@@ -10,7 +10,7 @@ by checking the wiki entries for answers to the most important questions.
   
 ## How to:
 - Check the publication date of the latest public branch (https://steamdb.info/app/1097150/depots/)
-  - If it's the same as the version the internal fits, then continue
+  - If it's the same as the version the internal fits, then download latest version [here](https://github.com/xTeJk/Fall_Guys_Internal/releases)
   - If it's not the same, go to https://github.com/xTeJk/Fall_Guys_Internal#offsets and update the offsets
 - Start game in any configuration
 - Inject cheat with [Xenos](https://github.com/DarthTon/Xenos/releases/download/2.3.2/Xenos_2.3.2.7z) (Native Inject / Existing Process)
