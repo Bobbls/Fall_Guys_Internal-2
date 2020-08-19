@@ -442,9 +442,15 @@ void update() {
 					FGInternalHelper::disable_fly = false;
 				}
 
+				// stun/knockback
 				character->fields._data->fields.anyCollisionStunForce = FGInternal::COLLISIONS::stun_collision ? FLT_MAX : VALUES::DEFAULT_VALUES::default_anyCollisionStunForce;
 				character->fields._data->fields.dynamicCollisionStunForce = FGInternal::COLLISIONS::stun_collision ? FLT_MAX : VALUES::DEFAULT_VALUES::default_dynamicCollisionStunForce;
+				// object collision
 				character->fields._ragdollController->fields.CollisionThreshold = FGInternal::COLLISIONS::object_collision ? FLT_MAX : VALUES::DEFAULT_VALUES::default_CollisionThreshold;
+				// player to player collision
+				character->fields._data->fields.collisionPlayerToPlayerUnpinMultiplier = FGInternal::COLLISIONS::player_collision ? 0 : VALUES::DEFAULT_VALUES::default_collisionPlayerToPlayerUnpinMultiplier;
+				// falling down
+				character->fields._data->fields.fallOverAngle = FGInternal::COLLISIONS::falling_down ? 0 : VALUES::DEFAULT_VALUES::default_fallOverAngle;
 
 				if (FGInternal::COLLISIONS::object_collision)
 					character->fields._ragdollController->fields.CollisionUpperBodyTransfer = 0.f;
@@ -485,6 +491,12 @@ void update() {
 					FGInternalHelper::disable_carryDropForce = false;
 				}
 
+				if (FGInternal::CARRY::carryTussleChances) {
+					character->fields._data->fields.carryAlwaysLoseTussleWhenGrabbed = 0.f;
+				} else if (FGInternalHelper::disable_carryTussleChances) {
+					character->fields._data->fields.carryAlwaysLoseTussleWhenGrabbed = VALUES::DEFAULT_VALUES::default_carryAlwaysLoseTussleWhenGrabbed;
+				}
+
 				if (FGInternal::GRAB::supergrabfeature_enabled) {
 					character->fields._data->fields.playerGrabDetectRadius = FLT_MAX;
 					character->fields._data->fields.playerGrabCheckDistance = FLT_MAX;
@@ -492,14 +504,16 @@ void update() {
 					character->fields._data->fields.playerGrabBreakTime = FLT_MAX;
 					character->fields._data->fields.armLength = FLT_MAX;
 					character->fields._data->fields.playerGrabCheckPredictionBase = FLT_MAX;
-					character->fields._data->fields.playerGrabImmediateVelocityReduction = 0;
+					character->fields._data->fields.playerGrabImmediateVelocityReduction = 0.f;
 					character->fields._data->fields.playerGrabberDragDirectionContribution = 1;
-					character->fields._data->fields.grabCooldown = 0;
-					character->fields._data->fields.playerGrabRegrabDelay = 0;
-					character->fields._data->fields.playerGrabBreakTimeJumpInfluence = 0;
-					character->fields._data->fields.forceReleaseRegrabCooldown = 0;
+					character->fields._data->fields.grabCooldown = 0.f;
+					character->fields._data->fields.playerGrabRegrabDelay = 0.f;
+					character->fields._data->fields.playerGrabBreakTimeJumpInfluence = 0.f;
+					character->fields._data->fields.forceReleaseRegrabCooldown = 0.f;
 					character->fields._data->fields.breakGrabAngle = 360;
-				} else if (!FGInternal::GRAB::supergrabfeature_enabled) {
+					character->fields._data->fields.playerGrabberVelocityComponent = FGInternal::GRAB::grabberVelocityBoost;
+					character->fields._data->fields.playerGrabbeeVelocityComponent = 1 - FGInternal::GRAB::grabberVelocityBoost;
+				} else if (FGInternalHelper::disable_supergrabfeature) {
 					character->fields._data->fields.playerGrabDetectRadius = VALUES::DEFAULT_VALUES::default_playerGrabDetectRadius;
 					character->fields._data->fields.playerGrabCheckDistance = VALUES::DEFAULT_VALUES::default_playerGrabCheckDistance;
 					character->fields._data->fields.playerGrabberMaxForce = VALUES::DEFAULT_VALUES::default_playerGrabberMaxForce;
@@ -513,6 +527,9 @@ void update() {
 					character->fields._data->fields.playerGrabBreakTimeJumpInfluence = VALUES::DEFAULT_VALUES::default_playerGrabBreakTimeJumpInfluence;
 					character->fields._data->fields.forceReleaseRegrabCooldown = VALUES::DEFAULT_VALUES::default_forceReleaseRegrabCooldown;
 					character->fields._data->fields.breakGrabAngle = VALUES::DEFAULT_VALUES::default_breakGrabAngle;
+					character->fields._data->fields.playerGrabberVelocityComponent = VALUES::DEFAULT_VALUES::default_playerGrabberVelocityComponent;
+					character->fields._data->fields.playerGrabbeeVelocityComponent = VALUES::DEFAULT_VALUES::default_playerGrabbeeVelocityComponent;
+					FGInternalHelper::disable_supergrabfeature = false;
 				}
 
 				if (FGInternal::GRAB::grabDetectRadius) {
@@ -581,6 +598,15 @@ void update() {
 					character->fields._data->fields.breakGrabAngle = FGInternal::GRAB::grabBreakAngleBoost;
 				} else if (!FGInternal::GRAB::grabBreakAngle) {
 					character->fields._data->fields.breakGrabAngle = VALUES::DEFAULT_VALUES::default_breakGrabAngle;
+				}
+
+				if (FGInternal::GRAB::grabberVelocity) {
+					character->fields._data->fields.playerGrabberVelocityComponent = FGInternal::GRAB::grabberVelocityBoost;
+					character->fields._data->fields.playerGrabbeeVelocityComponent = 1 - FGInternal::GRAB::grabberVelocityBoost;
+				}
+				else if (!FGInternal::GRAB::grabBreakAngle) {
+					character->fields._data->fields.playerGrabberVelocityComponent = VALUES::DEFAULT_VALUES::default_playerGrabberVelocityComponent;
+					character->fields._data->fields.playerGrabbeeVelocityComponent = VALUES::DEFAULT_VALUES::default_playerGrabbeeVelocityComponent;
 				}
 			} else {
 				if (game_level == round_jinxed) {

@@ -35,12 +35,15 @@ namespace FGInternal {
 	namespace COLLISIONS {
 		extern bool stun_collision;
 		extern bool object_collision;
+		extern bool player_collision;
+		extern bool falling_down;
 	};
 
 	namespace CARRY {
 		extern bool carryDropForce;
 		extern float carryNormalDropBoost;
 		extern float carryDiveDropBoost;
+		extern bool carryTussleChances;
 	};
 
 	namespace GRAB {
@@ -82,6 +85,9 @@ namespace FGInternal {
 
 		extern bool grabBreakAngle;
 		extern float grabBreakAngleBoost;
+
+		extern bool grabberVelocity;
+		extern float grabberVelocityBoost;
 	};
 };
 
@@ -98,6 +104,10 @@ namespace FGInternalHelper {
 	extern bool disable_gravity;
 
 	extern bool disable_carryDropForce;
+	extern bool disable_carryDiveDropForce;
+	extern bool disable_carryTussleChances;
+
+	extern bool disable_supergrabfeature;
 };
 
 namespace menu { 

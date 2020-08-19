@@ -24,50 +24,53 @@ namespace FGInternal {
 
 	namespace MOVEMENT {
 		bool fly_enabled = false;
-		float fly_speed = 15;
+		float fly_speed = 15.f;
 
 		bool speed_enabled = false;
-		float ms_normal_boost = 12;
-		float ms_carry_boost = 10;
-		float ms_grabbing_boost = 8;
+		float ms_normal_boost = 12.f;
+		float ms_carry_boost = 10.f;
+		float ms_grabbing_boost = 8.f;
 
 		bool dive_enabled = false;
-		float normalDive_speed = 25;
-		float airDive_speed = 15;
+		float normalDive_speed = 25.f;
+		float airDive_speed = 15.f;
 
 		bool gravity_enabled = false;
-		float gravity_scale = 2;
+		float gravity_scale = 2.f;
 	};
 
 	namespace COLLISIONS {
 		bool stun_collision = false;
 		bool object_collision = false;
+		bool player_collision = false;
+		bool falling_down = false;
 	};
 
 	namespace CARRY {
 		bool carryDropForce = false;
-		float carryNormalDropBoost = 0;
-		float carryDiveDropBoost = 0;
+		float carryNormalDropBoost = 0.f;
+		float carryDiveDropBoost = 0.f;
+		bool carryTussleChances = false;
 	};
 
 	namespace GRAB {
 		bool supergrabfeature_enabled = false;
 
 		bool grabDetectRadius = false;
-		float grabDetectRadiusBoost = 10;
+		float grabDetectRadiusBoost = 10.f;
 		
 		bool grabCheckDistance = false;
-		float grabCheckDistanceBoost = 5;
+		float grabCheckDistanceBoost = 5.f;
 
 		bool grabMaxForce = false;
-		float grabMaxForceBoost = 2;
+		float grabMaxForceBoost = 2.f;
 
 		bool grabBreakTime = false;
-		float grabBreakTimeBoost = 5;
+		float grabBreakTimeBoost = 5.f;
 		float grabBreakTimeJumpBoost = 0.01f;
 
 		bool armLength = false;
-		float armLengthBoost = 3;
+		float armLengthBoost = 3.f;
 
 		bool grabCheckPredictionBase = false;
 		float grabCheckPredictionBaseBoost = 0.5f;
@@ -89,6 +92,9 @@ namespace FGInternal {
 
 		bool grabBreakAngle = false;
 		float grabBreakAngleBoost = 100;
+
+		bool grabberVelocity = false;
+		float grabberVelocityBoost = 1.f;
 	};
 };
 
@@ -106,7 +112,10 @@ namespace FGInternalHelper {
 
 	bool disable_carryDropForce = false;
 	bool disable_carryDiveDropForce = false;
-}
+	bool disable_carryTussleChances = false;
+
+	bool disable_supergrabfeature = false;
+};
 
 namespace menu {
 	bool general_tab_active = true;
@@ -116,22 +125,19 @@ namespace menu {
 	bool carrying_tab_active = true;
 	bool grab_tab_active = true;
 
-	void push_color_for_button(bool active) 
-	{
-		if (active) 
-		{
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.f, 92.f / 255.f, 196.f / 255.f, 1.f });
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.f, 92.f / 255.f, 196.f / 255.f, 1.f });
-		}
-		else 
-		{
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 61.f / 255.f, 61.f / 255.f, 61.f / 255.f, 1.f });
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.f, 128.f / 255.f, 199.f / 255.f, 1.f });
+	void push_color_for_button(bool active) {
+		if (active) {
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 222.f / 255.f, 164.f / 255.f, 40.f / 255.f, 1.f });
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 237.f / 255.f, 177.f / 255.f, 47.f / 255.f, 1.f });
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 255.f, 194.f / 255.f, 64.f / 255.f, 1.f });
+		} else {
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 54.f / 255.f, 54.f / 255.f, 54.f / 255.f, 1.f });
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 237.f / 255.f, 177.f / 255.f, 47.f / 255.f, 1.f });
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 255.f, 194.f / 255.f, 64.f / 255.f, 1.f });
 		}
 	}
 
-	void draw_button(const char* name, bool& config_key, bool* change_opositive = nullptr)
-	{
+	void draw_button(const char* name, bool& config_key, bool* change_opositive = nullptr) {
 		push_color_for_button(config_key);
 		if (ImGui::Button(name, {244, 25}))
 		{
@@ -140,27 +146,26 @@ namespace menu {
 				*change_opositive = !config_key;
 		}
 
-		ImGui::PopStyleColor(2);
+		ImGui::PopStyleColor(3);
 	}
 
-	void draw_buttonDisabled(const char* name, bool config_key = false, bool* change_opositive = nullptr)
-	{
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 61.f / 255.f, 61.f / 255.f, 61.f / 255.f, 1.f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 61.f / 255.f, 61.f / 255.f, 61.f / 255.f, 1.f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 61.f / 255.f, 61.f / 255.f, 61.f / 255.f, 1.f });
+	void draw_buttonDisabled(const char* name, bool config_key = false, bool* change_opositive = nullptr) {
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 54.f / 255.f, 54.f / 255.f, 54.f / 255.f, 1.f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 54.f / 255.f, 54.f / 255.f, 54.f / 255.f, 1.f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 54.f / 255.f, 54.f / 255.f, 54.f / 255.f, 1.f });
+
 		if (!ImGui::Button(name, { 244, 25 }))
 			return;
 
-		ImGui::PopStyleColor(2);
+		ImGui::PopStyleColor(3);
 	}
 
-	void draw_slider(const char* name, float* val, float min, float max, const char* display_format = "%.2f")
-	{
+	void draw_slider(const char* name, float* val, float min, float max, const char* display_format = "%.2f") {
 		if (!display_format)
 			display_format = "%.2f";
 
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.f, 92.f / 255.f, 196.f / 255.f, 1.f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.f, 92.f / 255.f, 196.f / 255.f, 1.f });
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 222.f / 255.f, 164.f / 255.f, 40.f / 255.f, 1.f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 237.f / 255.f, 177.f / 255.f, 47.f / 255.f, 1.f });
 
 		ImGui::SetNextItemWidth(244.0f);
 		ImGui::SliderFloat(name, val, min, max, display_format);
@@ -168,32 +173,30 @@ namespace menu {
 		ImGui::PopStyleColor(2);
 	}
 
-	void draw_tab(const char* name, bool& active)
-	{
+	void draw_tab(const char* name, bool& active) {
 		ImGui::Text(name);
 		ImGui::SameLine(237);
 
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.f, 92.f / 255.f, 196.f / 255.f, 1.f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.f, 92.f / 255.f, 196.f / 255.f, 1.f });
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 222.f / 255.f, 164.f / 255.f, 40.f / 255.f, 1.f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 237.f / 255.f, 177.f / 255.f, 47.f / 255.f, 1.f });
 		if (ImGui::Button("", { 10, 10 }))
 			active = !active;
 		ImGui::PopStyleColor(2);
 	}
 
 	std::once_flag init_style;
-	void draw() 
-	{
+	void draw() {
 		std::call_once(init_style, [&]() {
 			auto& style = ImGui::GetStyle();
 			style.WindowRounding = 0.f;
 			style.FrameRounding = 0.f;
 			style.ItemSpacing = ImVec2(8, 2);
 			style.WindowPadding = ImVec2(3.f, 3.f);
-			style.Colors[ImGuiCol_FrameBg] = ImVec4{ 56.f / 255.f, 59.f / 255.f, 58.f / 255.f, 1.f };
-			style.Colors[ImGuiCol_FrameBgActive] = ImVec4{ 56.f / 255.f, 59.f / 255.f, 58.f / 255.f, 1.f };
-			style.Colors[ImGuiCol_FrameBgHovered] = ImVec4{ 56.f / 255.f, 59.f / 255.f, 58.f / 255.f, 1.f };
-			style.Colors[ImGuiCol_SliderGrabActive] = ImVec4{ 0.f, 92.f / 255.f, 196.f / 255.f, 1.f };
-			style.Colors[ImGuiCol_SliderGrab] = ImVec4{ 0.f, 128.f / 255.f, 199.f / 255.f, 1.f };
+			style.Colors[ImGuiCol_FrameBg] = ImVec4{ 35.f / 255.f, 35.f / 255.f, 35.f / 255.f, 1.f };
+			style.Colors[ImGuiCol_FrameBgActive] = ImVec4{ 46.f / 255.f, 46.f / 255.f, 46.f / 255.f, 1.f };
+			style.Colors[ImGuiCol_FrameBgHovered] = ImVec4{ 46.f / 255.f, 46.f / 255.f, 46.f / 255.f, 1.f };
+			style.Colors[ImGuiCol_SliderGrabActive] = ImVec4{ 222.f / 255.f, 164.f / 255.f, 40.f / 255.f, 1.f };
+			style.Colors[ImGuiCol_SliderGrab] = ImVec4{ 237.f / 255.f, 177.f / 255.f, 47.f / 255.f, 1.f };
 			});
 
 		ImGui::Begin("general_tab", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
@@ -241,11 +244,17 @@ namespace menu {
 		draw_tab(u8"» COLLISIONS TAB «", collisions_tab_active);
 		if (collisions_tab_active) {
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
-			ImGui::Text(u8"F10 » Stuns/Knockdowns");
+			ImGui::Text(u8"Stuns/Knockdowns");
 			draw_button("Disable Stuns/Knockdowns", FGInternal::COLLISIONS::stun_collision);
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
-			ImGui::Text(u8"F11 » Objects Collisions");
+			ImGui::Text(u8"Objects Collisions");
 			draw_button("Disable Objects Collisions", FGInternal::COLLISIONS::object_collision);
+			ImGui::Dummy(ImVec2(0.0f, 2.5f));
+			ImGui::Text(u8"Player to Player Collisions");
+			draw_button("Disable P2P Collisions", FGInternal::COLLISIONS::player_collision);
+			ImGui::Dummy(ImVec2(0.0f, 2.5f));
+			ImGui::Text(u8"Never Fall Down");
+			draw_button("Disable Falling Down", FGInternal::COLLISIONS::falling_down);
 		}
 		ImGui::End();
 
@@ -301,17 +310,23 @@ namespace menu {
 		draw_tab(u8"» CARRYING ITEMS TAB «", carrying_tab_active);
 		if (carrying_tab_active && !FGInternal::GENERAL::disable_safe_values) {
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
-			ImGui::Text(u8"F12 » [SHIFT] » Drop Boost");
+			ImGui::Text(u8"F10 » [SHIFT] » Drop Boost");
 			draw_button("Item Drop", FGInternal::CARRY::carryDropForce, &FGInternalHelper::disable_carryDropForce);
 			draw_slider("Normal Drop", &FGInternal::CARRY::carryNormalDropBoost, VALUES::SAFE_VALUES::CARRY::carryNormalDropForce_min, VALUES::SAFE_VALUES::CARRY::carryNormalDropForce_max);
 			draw_slider("Dive Drop", &FGInternal::CARRY::carryDiveDropBoost, VALUES::SAFE_VALUES::CARRY::carryDiveDropForce_min, VALUES::SAFE_VALUES::CARRY::carryDiveDropForce_max);
+			ImGui::Dummy(ImVec2(0.0f, 2.5f));
+			ImGui::Text(u8"F11 » Tussle When Grabbed");
+			draw_button("Enable Equal Chances", FGInternal::CARRY::carryTussleChances, &FGInternalHelper::disable_carryTussleChances);
 		}
 		else if (carrying_tab_active && FGInternal::GENERAL::disable_safe_values) {
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
-			ImGui::Text(u8"F12 » [SHIFT] » Drop Boost");
+			ImGui::Text(u8"F10 » [SHIFT] » Drop Boost");
 			draw_button("Item Drop", FGInternal::CARRY::carryDropForce, &FGInternalHelper::disable_carryDropForce);
 			draw_slider("Normal Drop", &FGInternal::CARRY::carryNormalDropBoost, 0, 2137);
 			draw_slider("Dive Drop", &FGInternal::CARRY::carryDiveDropBoost, 0, 2137);
+			ImGui::Dummy(ImVec2(0.0f, 2.5f));
+			ImGui::Text(u8"F11 » Tussle When Grabbed");
+			draw_button("Enable Equal Chances", FGInternal::CARRY::carryTussleChances, &FGInternalHelper::disable_carryTussleChances);
 		}
 		ImGui::End();
 
@@ -325,13 +340,13 @@ namespace menu {
 				&& !FGInternal::GRAB::grabCooldown && !FGInternal::GRAB::grabRegrabDelay
 				&& !FGInternal::GRAB::grabReleaseRegrabCooldown && !FGInternal::GRAB::grabBreakAngle) {
 				ImGui::Dummy(ImVec2(0.0f, 7.75f));
-				draw_button("Super Grab Feature", FGInternal::GRAB::supergrabfeature_enabled);
+				draw_button(u8"F12 » Super Grab Feature", FGInternal::GRAB::supergrabfeature_enabled, &FGInternalHelper::disable_supergrabfeature);
 				ImGui::Dummy(ImVec2(0.0f, 7.75f));
 			}
 			else {
 				ImGui::Text(u8"Disable all minor functions to");
 				ImGui::Text(u8"use Super Grab, which will remain");
-				ImGui::Text(u8"hidden to prevent errors.");
+				ImGui::Text(u8"hidden to prevent bugs.");
 			}
 
 			if (!FGInternal::GRAB::supergrabfeature_enabled) {
@@ -377,14 +392,17 @@ namespace menu {
 				ImGui::Text(u8"be hidden until you disable");
 				ImGui::Text(u8"this feature to avoid bugs.");
 			}
+			ImGui::Dummy(ImVec2(0.0f, 2.5f));
+			draw_button("Increase Grabber Velocity", FGInternal::GRAB::grabberVelocity);
+			draw_slider("Grabber Velocity", &FGInternal::GRAB::grabberVelocityBoost, VALUES::SAFE_VALUES::GRAB::grabberVelocity_min, VALUES::SAFE_VALUES::GRAB::grabberVelocity_max);
 		} else if (grab_tab_active && FGInternal::GENERAL::disable_safe_values) {
-			if (!FGInternal::GRAB::grabDetectRadius || !FGInternal::GRAB::grabCheckDistance || !FGInternal::GRAB::grabMaxForce
-				|| !FGInternal::GRAB::grabBreakTime || !FGInternal::GRAB::armLength || !FGInternal::GRAB::grabCheckPredictionBase
-				|| !FGInternal::GRAB::grabImmediateVelocityReduction || !FGInternal::GRAB::grabDragDirectionContribution
-				|| !FGInternal::GRAB::grabCooldown || !FGInternal::GRAB::grabRegrabDelay
-				|| !FGInternal::GRAB::grabReleaseRegrabCooldown || !FGInternal::GRAB::grabBreakAngle) {
+			if (!FGInternal::GRAB::grabDetectRadius && !FGInternal::GRAB::grabCheckDistance && !FGInternal::GRAB::grabMaxForce
+				&& !FGInternal::GRAB::grabBreakTime && !FGInternal::GRAB::armLength && !FGInternal::GRAB::grabCheckPredictionBase
+				&& !FGInternal::GRAB::grabImmediateVelocityReduction && !FGInternal::GRAB::grabDragDirectionContribution
+				&& !FGInternal::GRAB::grabCooldown && !FGInternal::GRAB::grabRegrabDelay
+				&& !FGInternal::GRAB::grabReleaseRegrabCooldown && !FGInternal::GRAB::grabBreakAngle) {
 				ImGui::Dummy(ImVec2(0.0f, 7.75f));
-				draw_button("Super Grab Feature", FGInternal::GRAB::supergrabfeature_enabled);
+				draw_button(u8"F12 » Super Grab Feature", FGInternal::GRAB::supergrabfeature_enabled, &FGInternalHelper::disable_supergrabfeature);
 				ImGui::Dummy(ImVec2(0.0f, 7.75f));
 			} else {
 				ImGui::Text(u8"Disable all minor functions to");
@@ -425,7 +443,7 @@ namespace menu {
 				draw_slider("Delay", &FGInternal::GRAB::grabRegrabDelayBoost, 0, 2137);
 				ImGui::Dummy(ImVec2(0.0f, 2.5f));
 				draw_button("Release Regrab Cooldown", FGInternal::GRAB::grabReleaseRegrabCooldown);
-				draw_slider("Cooldown", &FGInternal::GRAB::grabReleaseRegrabCooldownBoost, 0, 2137);
+				draw_slider("Regrab Cooldown", &FGInternal::GRAB::grabReleaseRegrabCooldownBoost, 0, 2137);
 				ImGui::Dummy(ImVec2(0.0f, 2.5f));
 				draw_button("Break Grab Angle", FGInternal::GRAB::grabBreakAngle);
 				draw_slider("Angle", &FGInternal::GRAB::grabBreakAngleBoost, 0, 360);
@@ -435,6 +453,9 @@ namespace menu {
 				ImGui::Text(u8"be hidden until you disable");
 				ImGui::Text(u8"this feature to avoid bugs.");
 			}
+			ImGui::Dummy(ImVec2(0.0f, 2.5f));
+			draw_button("Increase Grabber Velocity", FGInternal::GRAB::grabberVelocity);
+			draw_slider("Grabber Velocity", &FGInternal::GRAB::grabberVelocityBoost, 0, 2137);
 		}
 		ImGui::End();
 	}
@@ -533,16 +554,19 @@ namespace menu {
 			FGInternalHelper::disable_show_player_with_tail = !FGInternal::ESP::show_player_with_tail;
 		}
 
-		if (io.KeysDown[VK_F10] && !OldKeysDown[VK_F10])
-			FGInternal::COLLISIONS::stun_collision = !FGInternal::COLLISIONS::stun_collision;
-
-		if (io.KeysDown[VK_F11] && !OldKeysDown[VK_F11])
-			FGInternal::COLLISIONS::object_collision = !FGInternal::COLLISIONS::object_collision;
-
-		if (io.KeysDown[VK_F12] && !OldKeysDown[VK_F12]) {
+		if (io.KeysDown[VK_F10] && !OldKeysDown[VK_F10]) {
 			FGInternal::CARRY::carryDropForce = !FGInternal::CARRY::carryDropForce;
 			FGInternalHelper::disable_carryDropForce = !FGInternal::CARRY::carryDropForce;
 		}
+
+		if (io.KeysDown[VK_F11] && !OldKeysDown[VK_F11]) {
+			FGInternal::CARRY::carryTussleChances = !FGInternal::CARRY::carryTussleChances;
+			FGInternalHelper::disable_carryTussleChances = !FGInternal::CARRY::carryTussleChances;
+		}
+
+		if (io.KeysDown[VK_F12] && !OldKeysDown[VK_F12])
+			FGInternal::GRAB::supergrabfeature_enabled = !FGInternal::GRAB::supergrabfeature_enabled;
+			FGInternalHelper::disable_supergrabfeature = !FGInternal::GRAB::supergrabfeature_enabled;
 
 		if (io.KeysDown[VK_HOME] && !OldKeysDown[VK_HOME]) {
 			FGInternal::GENERAL::hide_corner_text = !FGInternal::GENERAL::hide_corner_text;
@@ -565,13 +589,13 @@ namespace menu {
 		auto y = float(15);
 
 		if (!FGInternal::GENERAL::hide_corner_text) {
-			draw_manager::add_text_on_screen({ 5, y }, 0xFF4045DB, 14, "FG Internal");
+			draw_manager::add_text_on_screen({ 5, y }, 0xFF232323, 14, "FG Internal");
 			y += text_size.y + 4.f;
-			draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, u8"» github.com/xTeJk «");
+			draw_manager::add_text_on_screen({ 5, y }, 0xFF363636, 12, u8"» github.com/xTeJk «");
 			y += text_size.y + 3.f;
-			draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, u8"» INSERT » Open Cheat Menu");
+			draw_manager::add_text_on_screen({ 5, y }, 0xFF363636, 12, u8"» INSERT » Open Cheat Menu");
 			y += text_size.y + 3.f;
-			draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, u8"» HOME » Hide Corner Text");
+			draw_manager::add_text_on_screen({ 5, y }, 0xFF363636, 12, u8"» HOME » Hide Corner Text");
 			y += text_size.y + 3.f;
 		}
 	}
