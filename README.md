@@ -1,5 +1,5 @@
 ![logo](https://i.imgur.com/gDbunES.png)  
-Fall Guys - Advanced Internal Cheat - 1.2_3 - 19.08.2020  
+Fall Guys - Advanced Internal Cheat - 1.2_4 - 19.08.2020  
 [![Discord](https://discordapp.com/api/guilds/370909694056726528/widget.png?style=shield)](https://discord.gg/jqbq85J)
   
   
@@ -56,6 +56,8 @@ replace to:
 ## Functions:
 All functions are possible for any configuration  
   
+  Menu Key: INSERT
+  
 - GENERAL:
   - HOME » Hide Corner Text
   - DELETE » Panic Key (instantly closes game)
@@ -80,19 +82,23 @@ All functions are possible for any configuration
   - F4 » Gravitation:
     - Gravity Scale (Default: 1.5)
 - COLLISIONS:
-  - F10 » Disable Stuns/Knockdowns
-  - F11 » Disable Object Collisions
+  - Disable Stuns/Knockdowns
+  - Disable Object Collisions
+  - Disable Player to Player Collisions
+  - Disable Falling Down
 - CARRYING GRABBABLE ITEMS:
-  - Item Drop Force:
+  - F10 » Item Drop Force:
     - Normal Item Drop (Default: 50)
     - Dive Item Drop (Default: 90)
+  - F11 » Equal Tussle Chances When Grabbed
 - GRABS:
-  - ★ Super Grab Feature
+  - F12 » ★ Super Grab Feature
   - Grab Detect Radius (Default: 6)
   - Grab Check Distance (Default: 2)
   - Grab Max Force (Default: 0.6)
-  - Grab Break Time (Default: 1.2)
-  - Grab Break Time Jump (Default: 0.01)
+  - Grab Break Time:
+    - Normal Time (Default: 1.2)
+    - Jump Time (Default: 0.01)
   - Arm Length (Default: 1)
   - Grab Check Prediction Base (Default: 0.1)
   - Grab Immediate Velocity Reduction (Default: 0.5)
@@ -100,8 +106,9 @@ All functions are possible for any configuration
   - Regrab Delay (Default: 2)
   - Release Regrab Cooldown (Default: 1)
   - Break Grab Angle (Default: 75)
+  - Grabber Velocity (Default: 0.1)
   
-![1](https://i.imgur.com/4XV9Gql.png)
+![1](https://i.imgur.com/iYHFElJ.png)
 ![2](https://media.giphy.com/media/lMyPbfquGuXZtp4xo6/giphy.gif)
 ![3](https://media.giphy.com/media/WU6FJLsf7eIkbgDpMc/giphy.gif)
 ![4](https://media.giphy.com/media/WoR2PCgTLjCTAyA7tT/giphy.gif)
