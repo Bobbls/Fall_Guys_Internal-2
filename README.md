@@ -1,5 +1,5 @@
 ![logo](https://i.imgur.com/gDbunES.png)  
-Fall Guys - Advanced Internal Cheat - 1.2_2 - 18.08.2020  
+Fall Guys - Advanced Internal Cheat - 1.2_3 - 19.08.2020  
 [![Discord](https://discordapp.com/api/guilds/370909694056726528/widget.png?style=shield)](https://discord.gg/jqbq85J)
   
   
@@ -86,8 +86,22 @@ All functions are possible for any configuration
   - Item Drop Force:
     - Normal Item Drop (Default: 50)
     - Dive Item Drop (Default: 90)
+- GRABS:
+  - ★ Super Grab Feature
+  - Grab Detect Radius (Default: 6)
+  - Grab Check Distance (Default: 2)
+  - Grab Max Force (Default: 0.6)
+  - Grab Break Time (Default: 1.2)
+  - Grab Break Time Jump (Default: 0.01)
+  - Arm Length (Default: 1)
+  - Grab Check Prediction Base (Default: 0.1)
+  - Grab Immediate Velocity Reduction (Default: 0.5)
+  - Grab Cooldown (Default: 0.5)
+  - Regrab Delay (Default: 2)
+  - Release Regrab Cooldown (Default: 1)
+  - Break Grab Angle (Default: 75)
   
-![1](https://i.imgur.com/y5sjk8e.png)
+![1](https://i.imgur.com/4XV9Gql.png)
 ![2](https://media.giphy.com/media/lMyPbfquGuXZtp4xo6/giphy.gif)
 ![3](https://media.giphy.com/media/WU6FJLsf7eIkbgDpMc/giphy.gif)
 ![4](https://media.giphy.com/media/WoR2PCgTLjCTAyA7tT/giphy.gif)

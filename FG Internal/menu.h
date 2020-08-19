@@ -42,6 +42,47 @@ namespace FGInternal {
 		extern float carryNormalDropBoost;
 		extern float carryDiveDropBoost;
 	};
+
+	namespace GRAB {
+		extern bool supergrabfeature_enabled;
+
+		extern bool grabDetectRadius;
+		extern float grabDetectRadiusBoost;
+
+		extern bool grabCheckDistance;
+		extern float grabCheckDistanceBoost;
+
+		extern bool grabMaxForce;
+		extern float grabMaxForceBoost;
+
+		extern bool grabBreakTime;
+		extern float grabBreakTimeBoost;
+		extern float grabBreakTimeJumpBoost;
+
+		extern bool armLength;
+		extern float armLengthBoost;
+
+		extern bool grabCheckPredictionBase;
+		extern float grabCheckPredictionBaseBoost;
+
+		extern bool grabImmediateVelocityReduction;
+		extern float grabImmediateVelocityReductionBoost;
+
+		extern bool grabDragDirectionContribution;
+		extern float grabDragDirectionContributionBoost;
+
+		extern bool grabCooldown;
+		extern float grabCooldownBoost;
+
+		extern bool grabRegrabDelay;
+		extern float grabRegrabDelayBoost;
+
+		extern bool grabReleaseRegrabCooldown;
+		extern float grabReleaseRegrabCooldownBoost;
+
+		extern bool grabBreakAngle;
+		extern float grabBreakAngleBoost;
+	};
 };
 
 namespace FGInternalHelper {

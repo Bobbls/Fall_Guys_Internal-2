@@ -1,4 +1,4 @@
-#include "menu.h"
+ï»¿#include "menu.h"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
@@ -49,6 +49,47 @@ namespace FGInternal {
 		float carryNormalDropBoost = 0;
 		float carryDiveDropBoost = 0;
 	};
+
+	namespace GRAB {
+		bool supergrabfeature_enabled = false;
+
+		bool grabDetectRadius = false;
+		float grabDetectRadiusBoost = 10;
+		
+		bool grabCheckDistance = false;
+		float grabCheckDistanceBoost = 5;
+
+		bool grabMaxForce = false;
+		float grabMaxForceBoost = 2;
+
+		bool grabBreakTime = false;
+		float grabBreakTimeBoost = 5;
+		float grabBreakTimeJumpBoost = 0.01f;
+
+		bool armLength = false;
+		float armLengthBoost = 3;
+
+		bool grabCheckPredictionBase = false;
+		float grabCheckPredictionBaseBoost = 0.5f;
+
+		bool grabImmediateVelocityReduction = false;
+		float grabImmediateVelocityReductionBoost = 1.25f;
+
+		bool grabDragDirectionContribution = false;
+		float grabDragDirectionContributionBoost = 1.25f;
+
+		bool grabCooldown = false;
+		float grabCooldownBoost = 0.01f;
+
+		bool grabRegrabDelay = false;
+		float grabRegrabDelayBoost = 0.01f;
+
+		bool grabReleaseRegrabCooldown = false;
+		float grabReleaseRegrabCooldownBoost = 0.01f;
+
+		bool grabBreakAngle = false;
+		float grabBreakAngleBoost = 100;
+	};
 };
 
 namespace FGInternalHelper {
@@ -73,6 +114,7 @@ namespace menu {
 	bool boost_tab_active = true;
 	bool collisions_tab_active = true;
 	bool carrying_tab_active = true;
+	bool grab_tab_active = true;
 
 	void push_color_for_button(bool active) 
 	{
@@ -105,6 +147,7 @@ namespace menu {
 	{
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 61.f / 255.f, 61.f / 255.f, 61.f / 255.f, 1.f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 61.f / 255.f, 61.f / 255.f, 61.f / 255.f, 1.f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 61.f / 255.f, 61.f / 255.f, 61.f / 255.f, 1.f });
 		if (!ImGui::Button(name, { 244, 25 }))
 			return;
 
@@ -155,98 +198,99 @@ namespace menu {
 
 		ImGui::Begin("general_tab", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 		ImGui::SetWindowSize({ 250, 0 }, ImGuiCond_Always);
-		draw_tab(u8"» GENERAL TAB «", general_tab_active);
+		draw_tab(u8"Â» GENERAL TAB Â«", general_tab_active);
 		if (general_tab_active) {
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
-			ImGui::Text(u8"HOME » Hide Corner Menu");
+			ImGui::Text(u8"HOME Â» Hide Corner Menu");
 			draw_button("Left Sided Menu", FGInternal::GENERAL::hide_corner_text);
 			ImGui::Dummy(ImVec2(0.0f, 5.0f));
-			ImGui::Text(u8"END » Unhook Cheat");
+			ImGui::Text(u8"END Â» Unhook Cheat");
 			draw_buttonDisabled("Kill Cheat Process");
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
-			ImGui::Text(u8"DEL » Panic Key");
+			ImGui::Text(u8"DEL Â» Panic Key");
 			draw_buttonDisabled("Kill Game Process");
 			ImGui::Dummy(ImVec2(0.0f, 5.0f));
-			ImGui::Text(u8"Unsafe Values » 0-2137");
+			ImGui::Text(u8"Unsafe Values Â» 0 - 2137");
 			draw_button("Disable Safe Values", FGInternal::GENERAL::disable_safe_values);
 		}
 		ImGui::End();
 
 		ImGui::Begin("visuals_tab", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 		ImGui::SetWindowSize({ 250, 0 }, ImGuiCond_Always);
-		draw_tab(u8"» VISUALS TAB «", esp_tab_active);
+		draw_tab(u8"Â» VISUALS TAB Â«", esp_tab_active);
 		if (esp_tab_active) {
-			ImGui::Text(u8"F5 » Doors Rush");
+			ImGui::Text(u8"F5 Â» Doors Rush");
 			draw_button("Correct Doors", FGInternal::ESP::correct_doors_enabled, &FGInternalHelper::disable_correct_doors);
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
-			ImGui::Text(u8"F6 » Tip Toe");
+			ImGui::Text(u8"F6 Â» Tip Toe");
 			draw_button("Correct Path", FGInternal::ESP::correct_path_enabled, &FGInternalHelper::disable_correct_path);
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
-			ImGui::Text(u8"F7 » Jinxed");
+			ImGui::Text(u8"F7 Â» Jinxed");
 			draw_button("Non-Jinxed Players", FGInternal::ESP::non_jinxed_players_enabled, &FGInternalHelper::disable_non_jinxed_players);
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
-			ImGui::Text(u8"F8 » Fall Match (Fruits)");
+			ImGui::Text(u8"F8 Â» Fall Match (Fruits)");
 			draw_button("All Platforms Visible", FGInternal::ESP::show_all_platforms_enabled, &FGInternalHelper::disable_show_all_platforms);
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
-			ImGui::Text(u8"F9 » Grab a Tail (Final)");
+			ImGui::Text(u8"F9 Â» Grab a Tail (Final)");
 			draw_button("Player with Tail", FGInternal::ESP::show_player_with_tail, &FGInternalHelper::disable_show_player_with_tail);
 		}
 		ImGui::End();
 
 		ImGui::Begin("collisions_tab", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 		ImGui::SetWindowSize({ 250, 0 }, ImGuiCond_Always);
-		draw_tab(u8"» COLLISIONS TAB «", collisions_tab_active);
+		draw_tab(u8"Â» COLLISIONS TAB Â«", collisions_tab_active);
 		if (collisions_tab_active) {
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
-			ImGui::Text(u8"F10 » Stuns/Knockdowns");
+			ImGui::Text(u8"F10 Â» Stuns/Knockdowns");
 			draw_button("Disable Stuns/Knockdowns", FGInternal::COLLISIONS::stun_collision);
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
-			ImGui::Text(u8"F11 » Objects Collisions");
+			ImGui::Text(u8"F11 Â» Objects Collisions");
 			draw_button("Disable Objects Collisions", FGInternal::COLLISIONS::object_collision);
 		}
 		ImGui::End();
 
 		ImGui::Begin("movement_tab", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 		ImGui::SetWindowSize({ 250, 0 }, ImGuiCond_Always);
-		draw_tab(u8"» MOVEMENT TAB «", boost_tab_active);
+		draw_tab(u8"Â» MOVEMENT TAB Â«", boost_tab_active);
 		if (boost_tab_active && !FGInternal::GENERAL::disable_safe_values) {
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
-			ImGui::Text(u8"F1 » [SPACE/SHIFT] » Flying Mode");
+			ImGui::Text(u8"F1 Â» [SPACE/SHIFT] Â» Flying Mode");
 			draw_button("Enable Flying", FGInternal::MOVEMENT::fly_enabled, &FGInternalHelper::disable_fly);
 			draw_slider("Flying Speed", &FGInternal::MOVEMENT::fly_speed, VALUES::SAFE_VALUES::MOVEMENT::fly_speed_min, VALUES::SAFE_VALUES::MOVEMENT::fly_speed_max);
 			ImGui::Dummy(ImVec2(0.0f, 5.0f));
-			ImGui::Text(u8"F2 » [W] » Speed Hack");
+			ImGui::Text(u8"F2 Â» [W] Â» Speed Hack");
 			draw_button("Movement Speed Boost", FGInternal::MOVEMENT::speed_enabled, &FGInternalHelper::disable_speed);
 			draw_slider("Normal Speed", &FGInternal::MOVEMENT::ms_normal_boost, VALUES::SAFE_VALUES::MOVEMENT::ms_normal_min, VALUES::SAFE_VALUES::MOVEMENT::ms_normal_max);
 			draw_slider("Carrying Speed", &FGInternal::MOVEMENT::ms_carry_boost, VALUES::SAFE_VALUES::MOVEMENT::ms_carry_min, VALUES::SAFE_VALUES::MOVEMENT::ms_carry_max);
 			draw_slider("Grabbing Speed", &FGInternal::MOVEMENT::ms_grabbing_boost, VALUES::SAFE_VALUES::MOVEMENT::ms_grabbing_min, VALUES::SAFE_VALUES::MOVEMENT::ms_grabbing_max);
 			ImGui::Dummy(ImVec2(0.0f, 5.0f));
-			ImGui::Text(u8"F3 » [CTRL/RMB] » Dive");
+			ImGui::Text(u8"F3 Â» [CTRL/RMB] Â» Dive");
 			draw_button("Dive Boost", FGInternal::MOVEMENT::dive_enabled, &FGInternalHelper::disable_dive);
 			draw_slider("Normal Dive", &FGInternal::MOVEMENT::normalDive_speed, VALUES::SAFE_VALUES::MOVEMENT::normalDive_speed_min, VALUES::SAFE_VALUES::MOVEMENT::normalDive_speed_max);
 			draw_slider("Air Dive", &FGInternal::MOVEMENT::airDive_speed, VALUES::SAFE_VALUES::MOVEMENT::airDive_speed_min, VALUES::SAFE_VALUES::MOVEMENT::airDive_speed_max);
 			ImGui::Dummy(ImVec2(0.0f, 5.0f));
-			ImGui::Text(u8"F4 » [SPACE] » Gravitation");
+			ImGui::Text(u8"F4 Â» [SPACE] Â» Gravitation");
+			ImGui::Text(u8"Lower Value - Lower Gravitation");
 			draw_button("Gravity Scale", FGInternal::MOVEMENT::gravity_enabled, &FGInternalHelper::disable_gravity);
 			draw_slider("Gravity Boost", &FGInternal::MOVEMENT::gravity_scale, VALUES::SAFE_VALUES::MOVEMENT::gravity_scale_min, VALUES::SAFE_VALUES::MOVEMENT::gravity_scale_max);
 		} else if (boost_tab_active && FGInternal::GENERAL::disable_safe_values) {
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
-			ImGui::Text(u8"F1 » [SPACE/SHIFT] » Flying Mode");
+			ImGui::Text(u8"F1 Â» [SPACE/SHIFT] Â» Flying Mode");
 			draw_button("Enable Flying", FGInternal::MOVEMENT::fly_enabled, &FGInternalHelper::disable_fly);
 			draw_slider("Flying Speed", &FGInternal::MOVEMENT::fly_speed, 0, 2137);
 			ImGui::Dummy(ImVec2(0.0f, 5.0f));
-			ImGui::Text(u8"F2 » [W] » Speed Hack");
+			ImGui::Text(u8"F2 Â» [W] Â» Speed Hack");
 			draw_button("Movement Speed Boost", FGInternal::MOVEMENT::speed_enabled, &FGInternalHelper::disable_speed);
 			draw_slider("Normal Speed", &FGInternal::MOVEMENT::ms_normal_boost, 0, 2137);
 			draw_slider("Carrying Speed", &FGInternal::MOVEMENT::ms_carry_boost, 0, 2137);
 			draw_slider("Grabbing Speed", &FGInternal::MOVEMENT::ms_grabbing_boost, 0, 2137);
 			ImGui::Dummy(ImVec2(0.0f, 5.0f));
-			ImGui::Text(u8"F3 » [CTRL/RMB] » Dive");
+			ImGui::Text(u8"F3 Â» [CTRL/RMB] Â» Dive");
 			draw_button("Dive Boost", FGInternal::MOVEMENT::dive_enabled, &FGInternalHelper::disable_dive);
 			draw_slider("Normal Dive", &FGInternal::MOVEMENT::normalDive_speed, 0, 2137);
 			draw_slider("Air Dive", &FGInternal::MOVEMENT::airDive_speed, 0, 2137);
 			ImGui::Dummy(ImVec2(0.0f, 5.0f));
-			ImGui::Text(u8"F4 » [SPACE] » Gravitation");
+			ImGui::Text(u8"F4 Â» [SPACE] Â» Gravitation");
 			draw_button(" Gravity Scale", FGInternal::MOVEMENT::gravity_enabled, &FGInternalHelper::disable_gravity);
 			draw_slider("Gravitation", &FGInternal::MOVEMENT::gravity_scale, 0, 10);
 		}
@@ -254,19 +298,143 @@ namespace menu {
 
 		ImGui::Begin("carrying_tab", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 		ImGui::SetWindowSize({ 250, 0 }, ImGuiCond_Always);
-		draw_tab(u8"» CARRYING ITEMS TAB «", carrying_tab_active);
+		draw_tab(u8"Â» CARRYING ITEMS TAB Â«", carrying_tab_active);
 		if (carrying_tab_active && !FGInternal::GENERAL::disable_safe_values) {
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
-			ImGui::Text(u8"F12 » [SHIFT] » Drop Boost");
+			ImGui::Text(u8"F12 Â» [SHIFT] Â» Drop Boost");
 			draw_button("Item Drop", FGInternal::CARRY::carryDropForce, &FGInternalHelper::disable_carryDropForce);
 			draw_slider("Normal Drop", &FGInternal::CARRY::carryNormalDropBoost, VALUES::SAFE_VALUES::CARRY::carryNormalDropForce_min, VALUES::SAFE_VALUES::CARRY::carryNormalDropForce_max);
 			draw_slider("Dive Drop", &FGInternal::CARRY::carryDiveDropBoost, VALUES::SAFE_VALUES::CARRY::carryDiveDropForce_min, VALUES::SAFE_VALUES::CARRY::carryDiveDropForce_max);
-		} else if (carrying_tab_active && FGInternal::GENERAL::disable_safe_values) {
+		}
+		else if (carrying_tab_active && FGInternal::GENERAL::disable_safe_values) {
 			ImGui::Dummy(ImVec2(0.0f, 2.5f));
-			ImGui::Text(u8"F12 » [SHIFT] » Drop Boost");
+			ImGui::Text(u8"F12 Â» [SHIFT] Â» Drop Boost");
 			draw_button("Item Drop", FGInternal::CARRY::carryDropForce, &FGInternalHelper::disable_carryDropForce);
 			draw_slider("Normal Drop", &FGInternal::CARRY::carryNormalDropBoost, 0, 2137);
 			draw_slider("Dive Drop", &FGInternal::CARRY::carryDiveDropBoost, 0, 2137);
+		}
+		ImGui::End();
+
+		ImGui::Begin("grab_tab", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
+		ImGui::SetWindowSize({ 250, 0 }, ImGuiCond_Always);
+		draw_tab(u8"Â» GRAB FEATURES TAB Â«", grab_tab_active);
+		if (grab_tab_active && !FGInternal::GENERAL::disable_safe_values) {
+			if (!FGInternal::GRAB::grabDetectRadius && !FGInternal::GRAB::grabCheckDistance && !FGInternal::GRAB::grabMaxForce
+				&& !FGInternal::GRAB::grabBreakTime && !FGInternal::GRAB::armLength && !FGInternal::GRAB::grabCheckPredictionBase
+				&& !FGInternal::GRAB::grabImmediateVelocityReduction && !FGInternal::GRAB::grabDragDirectionContribution
+				&& !FGInternal::GRAB::grabCooldown && !FGInternal::GRAB::grabRegrabDelay
+				&& !FGInternal::GRAB::grabReleaseRegrabCooldown && !FGInternal::GRAB::grabBreakAngle) {
+				ImGui::Dummy(ImVec2(0.0f, 7.75f));
+				draw_button("Super Grab Feature", FGInternal::GRAB::supergrabfeature_enabled);
+				ImGui::Dummy(ImVec2(0.0f, 7.75f));
+			}
+			else {
+				ImGui::Text(u8"Disable all minor functions to");
+				ImGui::Text(u8"use Super Grab, which will remain");
+				ImGui::Text(u8"hidden to prevent errors.");
+			}
+
+			if (!FGInternal::GRAB::supergrabfeature_enabled) {
+				draw_button("Grab Detect Radius", FGInternal::GRAB::grabDetectRadius);
+				draw_slider("Radius", &FGInternal::GRAB::grabDetectRadiusBoost, VALUES::SAFE_VALUES::GRAB::grabDetectRadius_min, VALUES::SAFE_VALUES::GRAB::grabDetectRadius_max);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Grab Check Distance", FGInternal::GRAB::grabCheckDistance);
+				draw_slider("Distance", &FGInternal::GRAB::grabCheckDistanceBoost, VALUES::SAFE_VALUES::GRAB::grabCheckDistance_min, VALUES::SAFE_VALUES::GRAB::grabCheckDistance_max);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Grab Max Force", FGInternal::GRAB::grabMaxForce);
+				draw_slider("Force", &FGInternal::GRAB::grabMaxForceBoost, VALUES::SAFE_VALUES::GRAB::grabMaxForce_min, VALUES::SAFE_VALUES::GRAB::grabMaxForce_max);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Grab Break Time", FGInternal::GRAB::grabBreakTime);
+				draw_slider("Normal Break", &FGInternal::GRAB::grabBreakTimeBoost, VALUES::SAFE_VALUES::GRAB::grabBreakTime_min, VALUES::SAFE_VALUES::GRAB::grabBreakTime_max);
+				draw_slider("Jump Break", &FGInternal::GRAB::grabBreakTimeJumpBoost, VALUES::SAFE_VALUES::GRAB::grabBreakTimeJump_min, VALUES::SAFE_VALUES::GRAB::grabBreakTimeJump_max);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Arm Length", FGInternal::GRAB::armLength);
+				draw_slider("Boost", &FGInternal::GRAB::armLengthBoost, VALUES::SAFE_VALUES::GRAB::armLength_min, VALUES::SAFE_VALUES::GRAB::armLength_max);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Grab Check Prediction", FGInternal::GRAB::grabCheckPredictionBase);
+				draw_slider("Prediction Boost", &FGInternal::GRAB::grabCheckPredictionBaseBoost, VALUES::SAFE_VALUES::GRAB::grabCheckPredictionBase_min, VALUES::SAFE_VALUES::GRAB::grabCheckPredictionBase_max);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Grab Velocity Reduction", FGInternal::GRAB::grabImmediateVelocityReduction);
+				draw_slider("Reduction", &FGInternal::GRAB::grabImmediateVelocityReductionBoost, VALUES::SAFE_VALUES::GRAB::grabImmediateVelocityReduction_min, VALUES::SAFE_VALUES::GRAB::grabImmediateVelocityReduction_max);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Grab Direction Contribution", FGInternal::GRAB::grabDragDirectionContribution);
+				draw_slider("Drag Boost", &FGInternal::GRAB::grabDragDirectionContributionBoost, VALUES::SAFE_VALUES::GRAB::grabDragDirectionContribution_min, VALUES::SAFE_VALUES::GRAB::grabDragDirectionContribution_max);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Grab Cooldown", FGInternal::GRAB::grabCooldown);
+				draw_slider("Cooldown", &FGInternal::GRAB::grabCooldownBoost, VALUES::SAFE_VALUES::GRAB::grabCooldown_min, VALUES::SAFE_VALUES::GRAB::grabCooldown_max);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Regrab Delay", FGInternal::GRAB::grabRegrabDelay);
+				draw_slider("Delay", &FGInternal::GRAB::grabRegrabDelayBoost, VALUES::SAFE_VALUES::GRAB::grabRegrabDelay_min, VALUES::SAFE_VALUES::GRAB::grabRegrabDelay_max);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Release Regrab Cooldown", FGInternal::GRAB::grabReleaseRegrabCooldown);
+				draw_slider("Regrab Cooldown", &FGInternal::GRAB::grabReleaseRegrabCooldownBoost, VALUES::SAFE_VALUES::GRAB::grabReleaseRegrabCooldown_min, VALUES::SAFE_VALUES::GRAB::grabReleaseRegrabCooldown_max);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Break Grab Angle", FGInternal::GRAB::grabBreakAngle);
+				draw_slider("Angle", &FGInternal::GRAB::grabBreakAngleBoost, VALUES::SAFE_VALUES::GRAB::grabBreakAngle_min, VALUES::SAFE_VALUES::GRAB::grabBreakAngle_max);
+			} else {
+				ImGui::Text(u8"Super Grab uses all of the");
+				ImGui::Text(u8"following features that will");
+				ImGui::Text(u8"be hidden until you disable");
+				ImGui::Text(u8"this feature to avoid bugs.");
+			}
+		} else if (grab_tab_active && FGInternal::GENERAL::disable_safe_values) {
+			if (!FGInternal::GRAB::grabDetectRadius || !FGInternal::GRAB::grabCheckDistance || !FGInternal::GRAB::grabMaxForce
+				|| !FGInternal::GRAB::grabBreakTime || !FGInternal::GRAB::armLength || !FGInternal::GRAB::grabCheckPredictionBase
+				|| !FGInternal::GRAB::grabImmediateVelocityReduction || !FGInternal::GRAB::grabDragDirectionContribution
+				|| !FGInternal::GRAB::grabCooldown || !FGInternal::GRAB::grabRegrabDelay
+				|| !FGInternal::GRAB::grabReleaseRegrabCooldown || !FGInternal::GRAB::grabBreakAngle) {
+				ImGui::Dummy(ImVec2(0.0f, 7.75f));
+				draw_button("Super Grab Feature", FGInternal::GRAB::supergrabfeature_enabled);
+				ImGui::Dummy(ImVec2(0.0f, 7.75f));
+			} else {
+				ImGui::Text(u8"Disable all minor functions to");
+				ImGui::Text(u8"use Super Grab, which will remain");
+				ImGui::Text(u8"hidden to prevent bugs.");
+			}
+
+			if (!FGInternal::GRAB::supergrabfeature_enabled) {
+				draw_button("Grab Detect Radius", FGInternal::GRAB::grabDetectRadius);
+				draw_slider("Radius", &FGInternal::GRAB::grabDetectRadiusBoost, 0, 2137);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Grab Check Distance", FGInternal::GRAB::grabCheckDistance);
+				draw_slider("Distance", &FGInternal::GRAB::grabCheckDistanceBoost, 0, 2137);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Grab Max Force", FGInternal::GRAB::grabMaxForce);
+				draw_slider("Force", &FGInternal::GRAB::grabMaxForceBoost, 0, 2137);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Grab Break Time", FGInternal::GRAB::grabBreakTime);
+				draw_slider("Normal Break", &FGInternal::GRAB::grabBreakTimeBoost, 0, 2137);
+				draw_slider("Jump Break", &FGInternal::GRAB::grabBreakTimeJumpBoost, 0, 2137);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Arm Length", FGInternal::GRAB::armLength);
+				draw_slider("Boost", &FGInternal::GRAB::armLengthBoost, 0, 2137);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Grab Check Prediction", FGInternal::GRAB::grabCheckPredictionBase);
+				draw_slider("Prediction Boost", &FGInternal::GRAB::grabCheckPredictionBaseBoost, 0, 2137);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Grab Velocity Reduction", FGInternal::GRAB::grabImmediateVelocityReduction);
+				draw_slider("Reduction", &FGInternal::GRAB::grabImmediateVelocityReductionBoost, 0, 2137);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Grab Direction Contribution", FGInternal::GRAB::grabDragDirectionContribution);
+				draw_slider("Drag Boost", &FGInternal::GRAB::grabDragDirectionContributionBoost, 0, 2137);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Grab Cooldown", FGInternal::GRAB::grabCooldown);
+				draw_slider("Cooldown", &FGInternal::GRAB::grabCooldownBoost, 0, 2137);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Regrab Delay", FGInternal::GRAB::grabRegrabDelay);
+				draw_slider("Delay", &FGInternal::GRAB::grabRegrabDelayBoost, 0, 2137);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Release Regrab Cooldown", FGInternal::GRAB::grabReleaseRegrabCooldown);
+				draw_slider("Cooldown", &FGInternal::GRAB::grabReleaseRegrabCooldownBoost, 0, 2137);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Break Grab Angle", FGInternal::GRAB::grabBreakAngle);
+				draw_slider("Angle", &FGInternal::GRAB::grabBreakAngleBoost, 0, 360);
+			} else {
+				ImGui::Text(u8"Super Grab uses all of the");
+				ImGui::Text(u8"following features that will");
+				ImGui::Text(u8"be hidden until you disable");
+				ImGui::Text(u8"this feature to avoid bugs.");
+			}
 		}
 		ImGui::End();
 	}
@@ -399,11 +567,11 @@ namespace menu {
 		if (!FGInternal::GENERAL::hide_corner_text) {
 			draw_manager::add_text_on_screen({ 5, y }, 0xFF4045DB, 14, "FG Internal");
 			y += text_size.y + 4.f;
-			draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, u8"» github.com/xTeJk «");
+			draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, u8"Â» github.com/xTeJk Â«");
 			y += text_size.y + 3.f;
-			draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, u8"» INSERT » Open Cheat Menu");
+			draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, u8"Â» INSERT Â» Open Cheat Menu");
 			y += text_size.y + 3.f;
-			draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, u8"» HOME » Hide Corner Text");
+			draw_manager::add_text_on_screen({ 5, y }, 0xFF37CC5A, 12, u8"Â» HOME Â» Hide Corner Text");
 			y += text_size.y + 3.f;
 		}
 	}

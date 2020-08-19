@@ -304,7 +304,7 @@ void update() {
 		cursor_manager->static_fields->_Instance_k__BackingField->fields.usingKeyboard = true;
 		cursor_manager->static_fields->_Instance_k__BackingField->fields.cursorVisible = true;
 	}
-	re_input->static_fields->HQLaKohzXRajMoKwSNuhmhfTAmCU = render::menu_is_open; //Rewired_ReInput__get_inputAllowed
+	re_input->static_fields->lnEYEzJPkNArQCiSclJonUOvZDE = render::menu_is_open; //Rewired_ReInput__get_inputAllowed
 
 	auto global = *reinterpret_cast<MPG_Utility_Singleton_GlobalGameStateClient__c**>(game::game + signatures::global_game_state);
 	if (!global)
@@ -369,6 +369,7 @@ void update() {
 		auto client_game_manager = state_game_in_progress->fields._clientGameManager;
 		if (!client_game_manager)
 			return;
+
 		auto player_list = client_game_manager->fields._players;
 		if (!player_list)
 			return;
@@ -407,6 +408,7 @@ void update() {
 
 		for (auto i = 0; i < player_list->fields.count; i++) {
 			auto character = reinterpret_cast<FallGuysCharacterController_o*>(player_list->fields.entries->m_Items[i].fields.value);
+
 			if (!character)
 				continue;
 
@@ -425,8 +427,8 @@ void update() {
 
 					if (io.KeysDown[0x57] || io.NavInputs[ImGuiNavInput_LStickUp] > 0.f)
 						*veloctiy = direction * FGInternal::MOVEMENT::fly_speed;
-					//else
-					//	*veloctiy = vector(0, 0, 0);
+					else
+						*veloctiy = vector(0, 0, 0);
 
 					if (io.KeysDown[VK_SPACE] || io.NavInputs[ImGuiNavInput_Activate] > 0.f)
 						veloctiy->z = FGInternal::MOVEMENT::fly_speed;
@@ -434,8 +436,7 @@ void update() {
 						veloctiy->z = -FGInternal::MOVEMENT::fly_speed;
 					else
 						veloctiy->z = 0.f;
-				}
-				else if (FGInternalHelper::disable_fly) {
+				} else if (FGInternalHelper::disable_fly) {
 					character->fields._data->fields.carryMaxSpeed = VALUES::DEFAULT_VALUES::default_carryMaxSpeed;
 					character->fields._ApplyGravity_k__BackingField = true;
 					FGInternalHelper::disable_fly = false;
@@ -452,8 +453,7 @@ void update() {
 					character->fields._data->fields.normalMaxSpeed = FGInternal::MOVEMENT::ms_normal_boost;
 					character->fields._data->fields.carryMaxSpeed = FGInternal::MOVEMENT::ms_carry_boost;
 					character->fields._data->fields.grabbingMaxSpeed = FGInternal::MOVEMENT::ms_grabbing_boost;
-				}
-				else if (FGInternalHelper::disable_speed) {
+				} else if (FGInternalHelper::disable_speed) {
 					character->fields._data->fields.normalMaxSpeed = VALUES::DEFAULT_VALUES::default_max_speed;
 					character->fields._data->fields.carryMaxSpeed = VALUES::DEFAULT_VALUES::default_carryMaxSpeed;
 					character->fields._data->fields.grabbingMaxSpeed = VALUES::DEFAULT_VALUES::default_grabbingMaxSpeed;
@@ -463,8 +463,7 @@ void update() {
 				if (FGInternal::MOVEMENT::dive_enabled) {
 					character->fields._data->fields.diveForce = FGInternal::MOVEMENT::normalDive_speed;
 					character->fields._data->fields.airDiveForce = FGInternal::MOVEMENT::airDive_speed;
-				}
-				else if (FGInternalHelper::disable_dive) {
+				} else if (FGInternalHelper::disable_dive) {
 					character->fields._data->fields.diveForce = VALUES::DEFAULT_VALUES::default_diveForce;
 					character->fields._data->fields.airDiveForce = VALUES::DEFAULT_VALUES::default_airDiveForce;
 					FGInternalHelper::disable_dive = false;
@@ -472,8 +471,7 @@ void update() {
 
 				if (FGInternal::MOVEMENT::gravity_enabled) {
 					character->fields._data->fields.gravityScale = FGInternal::MOVEMENT::gravity_scale;
-				}
-				else if (FGInternalHelper::disable_gravity) {
+				} else if (FGInternalHelper::disable_gravity) {
 					character->fields._data->fields.gravityScale = VALUES::DEFAULT_VALUES::default_gravityScale;
 					FGInternalHelper::disable_gravity = false;
 				}
@@ -481,14 +479,110 @@ void update() {
 				if (FGInternal::CARRY::carryDropForce) {
 					character->fields._data->fields.carryNormalDropForce = FGInternal::CARRY::carryNormalDropBoost;
 					character->fields._data->fields.carryDiveDropForce = FGInternal::CARRY::carryDiveDropBoost;
-				}
-				else if (FGInternalHelper::disable_carryDropForce) {
+				} else if (FGInternalHelper::disable_carryDropForce) {
 					character->fields._data->fields.carryNormalDropForce = VALUES::DEFAULT_VALUES::default_carryNormalDropForce;
 					character->fields._data->fields.carryDiveDropForce = VALUES::DEFAULT_VALUES::default_carryDiveDropForce;
 					FGInternalHelper::disable_carryDropForce = false;
 				}
-			}
-			else {
+
+				if (FGInternal::GRAB::supergrabfeature_enabled) {
+					character->fields._data->fields.playerGrabDetectRadius = FLT_MAX;
+					character->fields._data->fields.playerGrabCheckDistance = FLT_MAX;
+					character->fields._data->fields.playerGrabberMaxForce = FLT_MAX;
+					character->fields._data->fields.playerGrabBreakTime = FLT_MAX;
+					character->fields._data->fields.armLength = FLT_MAX;
+					character->fields._data->fields.playerGrabCheckPredictionBase = FLT_MAX;
+					character->fields._data->fields.playerGrabImmediateVelocityReduction = 0;
+					character->fields._data->fields.playerGrabberDragDirectionContribution = 1;
+					character->fields._data->fields.grabCooldown = 0;
+					character->fields._data->fields.playerGrabRegrabDelay = 0;
+					character->fields._data->fields.playerGrabBreakTimeJumpInfluence = 0;
+					character->fields._data->fields.forceReleaseRegrabCooldown = 0;
+					character->fields._data->fields.breakGrabAngle = 360;
+				} else if (!FGInternal::GRAB::supergrabfeature_enabled) {
+					character->fields._data->fields.playerGrabDetectRadius = VALUES::DEFAULT_VALUES::default_playerGrabDetectRadius;
+					character->fields._data->fields.playerGrabCheckDistance = VALUES::DEFAULT_VALUES::default_playerGrabCheckDistance;
+					character->fields._data->fields.playerGrabberMaxForce = VALUES::DEFAULT_VALUES::default_playerGrabberMaxForce;
+					character->fields._data->fields.playerGrabBreakTime = VALUES::DEFAULT_VALUES::default_playerGrabBreakTime;
+					character->fields._data->fields.armLength = VALUES::DEFAULT_VALUES::default_armLength;
+					character->fields._data->fields.playerGrabCheckPredictionBase = VALUES::DEFAULT_VALUES::default_playerGrabCheckPredictionBase;
+					character->fields._data->fields.playerGrabImmediateVelocityReduction = VALUES::DEFAULT_VALUES::default_playerGrabImmediateVelocityReduction;
+					character->fields._data->fields.playerGrabberDragDirectionContribution = VALUES::DEFAULT_VALUES::default_playerGrabberDragDirectionContribution;
+					character->fields._data->fields.grabCooldown = VALUES::DEFAULT_VALUES::default_grabCooldown;
+					character->fields._data->fields.playerGrabRegrabDelay = VALUES::DEFAULT_VALUES::default_playerGrabRegrabDelay;
+					character->fields._data->fields.playerGrabBreakTimeJumpInfluence = VALUES::DEFAULT_VALUES::default_playerGrabBreakTimeJumpInfluence;
+					character->fields._data->fields.forceReleaseRegrabCooldown = VALUES::DEFAULT_VALUES::default_forceReleaseRegrabCooldown;
+					character->fields._data->fields.breakGrabAngle = VALUES::DEFAULT_VALUES::default_breakGrabAngle;
+				}
+
+				if (FGInternal::GRAB::grabDetectRadius) {
+					character->fields._data->fields.playerGrabDetectRadius = FGInternal::GRAB::grabDetectRadiusBoost;
+				} else if (!FGInternal::GRAB::grabDetectRadius) {
+					character->fields._data->fields.playerGrabDetectRadius = VALUES::DEFAULT_VALUES::default_playerGrabDetectRadius;
+				}
+
+				if (FGInternal::GRAB::grabCheckDistance) {
+					character->fields._data->fields.playerGrabCheckDistance = FGInternal::GRAB::grabCheckDistanceBoost;
+				} else if (!FGInternal::GRAB::grabCheckDistance) {
+					character->fields._data->fields.playerGrabCheckDistance = VALUES::DEFAULT_VALUES::default_playerGrabCheckDistance;
+				}
+
+				if (FGInternal::GRAB::grabMaxForce) {
+					character->fields._data->fields.playerGrabberMaxForce = FGInternal::GRAB::grabMaxForceBoost;
+				} else if (!FGInternal::GRAB::grabMaxForce) {
+					character->fields._data->fields.playerGrabberMaxForce = VALUES::DEFAULT_VALUES::default_playerGrabberMaxForce;
+				}
+
+				if (FGInternal::GRAB::grabBreakTime) {
+					character->fields._data->fields.playerGrabBreakTime = FGInternal::GRAB::grabBreakTimeBoost;
+					character->fields._data->fields.playerGrabBreakTimeJumpInfluence = FGInternal::GRAB::grabBreakTimeJumpBoost;
+				} else if (!FGInternal::GRAB::grabBreakTime) {
+					character->fields._data->fields.playerGrabBreakTime = VALUES::DEFAULT_VALUES::default_playerGrabBreakTime;
+					character->fields._data->fields.playerGrabBreakTimeJumpInfluence = VALUES::DEFAULT_VALUES::default_playerGrabBreakTimeJumpInfluence;
+				}
+
+				if (FGInternal::GRAB::armLength) {
+					character->fields._data->fields.armLength = FGInternal::GRAB::armLengthBoost;
+				} else if (!FGInternal::GRAB::grabMaxForce) {
+					character->fields._data->fields.armLength = VALUES::DEFAULT_VALUES::default_armLength;
+				}
+
+				if (FGInternal::GRAB::grabCheckPredictionBase) {
+					character->fields._data->fields.playerGrabCheckPredictionBase = FGInternal::GRAB::grabCheckPredictionBaseBoost;
+				} else if (!FGInternal::GRAB::grabCheckPredictionBase) {
+					character->fields._data->fields.playerGrabCheckPredictionBase = VALUES::DEFAULT_VALUES::default_playerGrabCheckPredictionBase;
+				}
+
+				if (FGInternal::GRAB::grabImmediateVelocityReduction) {
+					character->fields._data->fields.playerGrabImmediateVelocityReduction = FGInternal::GRAB::grabImmediateVelocityReductionBoost;
+				} else if (!FGInternal::GRAB::grabImmediateVelocityReduction) {
+					character->fields._data->fields.playerGrabImmediateVelocityReduction = VALUES::DEFAULT_VALUES::default_playerGrabImmediateVelocityReduction;
+				}
+
+				if (FGInternal::GRAB::grabDragDirectionContribution) {
+					character->fields._data->fields.playerGrabberDragDirectionContribution = FGInternal::GRAB::grabDragDirectionContributionBoost;
+				} else if (!FGInternal::GRAB::grabDragDirectionContribution) {
+					character->fields._data->fields.playerGrabberDragDirectionContribution = VALUES::DEFAULT_VALUES::default_playerGrabberDragDirectionContribution;
+				}
+
+				if (FGInternal::GRAB::grabRegrabDelay) {
+					character->fields._data->fields.playerGrabRegrabDelay = FGInternal::GRAB::grabRegrabDelayBoost;
+				} else if (!FGInternal::GRAB::grabRegrabDelay) {
+					character->fields._data->fields.playerGrabRegrabDelay = VALUES::DEFAULT_VALUES::default_playerGrabRegrabDelay;
+				}
+
+				if (FGInternal::GRAB::grabReleaseRegrabCooldown) {
+					character->fields._data->fields.forceReleaseRegrabCooldown = FGInternal::GRAB::grabReleaseRegrabCooldownBoost;
+				} else if (!FGInternal::GRAB::grabReleaseRegrabCooldown) {
+					character->fields._data->fields.playerGrabBreakTimeJumpInfluence = VALUES::DEFAULT_VALUES::default_forceReleaseRegrabCooldown;
+				}
+
+				if (FGInternal::GRAB::grabBreakAngle) {
+					character->fields._data->fields.breakGrabAngle = FGInternal::GRAB::grabBreakAngleBoost;
+				} else if (!FGInternal::GRAB::grabBreakAngle) {
+					character->fields._data->fields.breakGrabAngle = VALUES::DEFAULT_VALUES::default_breakGrabAngle;
+				}
+			} else {
 				if (game_level == round_jinxed) {
 					if (FGInternal::ESP::non_jinxed_players_enabled) {
 						if (get_character_team_id((uint32_t)player_list->fields.entries->m_Items[i].fields.key) != my_player_team_id) {
@@ -497,7 +591,7 @@ void update() {
 								|| !character->fields._ActiveTagAccessory_k__BackingField->fields._isAccessoryEnabled) {
 								vector vec_min, vec_max;
 								if (get_bounding_box2d(character->fields._collider, vec_min, vec_max))
-									draw_manager::add_rect_on_screen(vec_min, vec_max, 0xFF652FBD, 0.f, -1, 1.f);
+									draw_manager::add_rect_on_screen(vec_min, vec_max, 0xFFE33B76, 0.f, -1, 2.5f);
 							}
 						}
 					}
@@ -508,6 +602,9 @@ void update() {
 		if (game_level == round_door_dash || game_level == round_tip_toe || game_level == round_match_fall) {
 			auto gameobjectmanager = *reinterpret_cast<game_object_manager**>(game::unity + signatures::game_object_manager);
 			for (auto i = gameobjectmanager->active_objects; std::uintptr_t(i) != std::uintptr_t(&gameobjectmanager->last_active_object); i = i->next_node) {
+				if (!i)
+					break;
+
 				auto current_object = i->object;
 				if (current_object) {
 					auto component_size = *reinterpret_cast<int32_t*>(std::uintptr_t(current_object) + unity::components_size);
@@ -548,7 +645,7 @@ void update() {
 
 								vector vec_min, vec_max;
 								if (get_bounding_box2d(real_door->fields._wallCollider, vec_min, vec_max))
-									draw_manager::add_rect_on_screen(vec_min, vec_max, 0xFF589C21, 0.f, -1, 1.f);
+									draw_manager::add_rect_on_screen(vec_min, vec_max, 0xFF589C21, 0.f, -1, 2.5f);
 							}
 						}
 
@@ -588,7 +685,7 @@ void update() {
 				}
 			}
 		}
-		if (GetAsyncKeyState(0x4D)) {
+		if (GetAsyncKeyState(0x4D)) { // m
 			printf("MAP: %ws\n", instance->fields._GameStateView_k__BackingField->fields.CurrentGameLevelName->fields.c_str);
 			auto gameobjectmanager = *reinterpret_cast<game_object_manager**>(game::unity + signatures::game_object_manager);
 			for (auto i = gameobjectmanager->active_objects; std::uintptr_t(i) != std::uintptr_t(&gameobjectmanager->last_active_object); i = i->next_node) {
