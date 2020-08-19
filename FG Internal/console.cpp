@@ -10,7 +10,7 @@ void console::alloc()
 	freopen("CONOUT$", "w", stdout);
 	freopen("CONOUT$", "w", stderr);
 
-	SetConsoleTitle("FG Internal");
+	SetConsoleTitle("FallGuys_client");
 	printf("Cheat menu should be available under the INSERT button.\n");
 	printf("If it's not, press DEL (above the movement arrows) then INJECT again.");
 }
