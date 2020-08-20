@@ -76,6 +76,9 @@ namespace VALUES {
 			const float grabberVelocity_min = 0.01f;
 			const float grabberVelocity_max = 5.f;
 
+			const float grabSeparationForce_min = 0.01f;
+			const float grabSeparationForce_max = 10.f;
+
 		}
 	};
 
@@ -116,5 +119,7 @@ namespace VALUES {
 		const float default_breakGrabAngle = 75.0f;
 		const float default_playerGrabberVelocityComponent = 0.1000000015f;
 		const float default_playerGrabbeeVelocityComponent = 0.200000003f;
+		const float default_playerGrabBreakSeparationForce = 7.0f;
+		const float default_playerGrabbeeInvulnerabilityWindow = 1.5f;
 	};
 };

@@ -1,5 +1,5 @@
 ![logo](https://i.imgur.com/gDbunES.png)  
-Fall Guys - Free Advanced Internal Cheat - 1.2_4 - 19.08.2020  
+Fall Guys - Free Advanced Internal Cheat - 1.2_5 - 20.08.2020  
 [![Discord](https://discordapp.com/api/guilds/370909694056726528/widget.png?style=shield)](https://discord.gg/jqbq85J) 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/xtejk)
   
@@ -93,7 +93,7 @@ All functions are possible for any configuration
     - Dive Item Drop (Default: 90)
   - F11 » Equal Tussle Chances When Grabbed
 - GRABS:
-  - F12 » ★ Super Grab Feature
+  - F12 » Super Grab Feature
   - Grab Detect Radius (Default: 6)
   - Grab Check Distance (Default: 2)
   - Grab Max Force (Default: 0.6)
@@ -107,10 +107,12 @@ All functions are possible for any configuration
   - Regrab Delay (Default: 2)
   - Release Regrab Cooldown (Default: 1)
   - Break Grab Angle (Default: 75)
+  - Grab Separation Force (Default: 7)
   - Grabber Velocity (Default: 0.1)
   
-![1](https://i.imgur.com/iYHFElJ.png)
+![1](https://i.imgur.com/tPLjbK2.png)
 ![2](https://media.giphy.com/media/lMyPbfquGuXZtp4xo6/giphy.gif)
-![3](https://media.giphy.com/media/WU6FJLsf7eIkbgDpMc/giphy.gif)
+![3](https://media.giphy.com/media/MBfnnKtO0H7YFgITik/giphy.gif)
 ![4](https://media.giphy.com/media/WoR2PCgTLjCTAyA7tT/giphy.gif)
-![5](https://i.imgur.com/Ge73we8.png)
+![5](https://media.giphy.com/media/hRyEd1yyebazh2YDjR/giphy.gif)
+![6](https://i.imgur.com/Ge73we8.png)

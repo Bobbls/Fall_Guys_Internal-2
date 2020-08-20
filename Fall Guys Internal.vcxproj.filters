@@ -84,8 +84,8 @@
     <ClInclude Include="FG Internal\render.h">
       <Filter>cheat</Filter>
     </ClInclude>
-    <ClInclude Include="values.h">
-      <Filter>cheat</Filter>
+    <ClInclude Include="FG Internal\values.h">
+      <Filter>cheat\memory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

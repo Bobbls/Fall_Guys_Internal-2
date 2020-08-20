@@ -95,6 +95,9 @@ namespace FGInternal {
 
 		bool grabberVelocity = false;
 		float grabberVelocityBoost = 1.f;
+
+		bool grabSeparationForce = false;
+		float grabSeparationForceBoost = 5.f;
 	};
 };
 
@@ -181,6 +184,7 @@ namespace menu {
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 237.f / 255.f, 177.f / 255.f, 47.f / 255.f, 1.f });
 		if (ImGui::Button("", { 10, 10 }))
 			active = !active;
+
 		ImGui::PopStyleColor(2);
 	}
 
@@ -386,6 +390,9 @@ namespace menu {
 				ImGui::Dummy(ImVec2(0.0f, 2.5f));
 				draw_button("Break Grab Angle", FGInternal::GRAB::grabBreakAngle);
 				draw_slider("Angle", &FGInternal::GRAB::grabBreakAngleBoost, VALUES::SAFE_VALUES::GRAB::grabBreakAngle_min, VALUES::SAFE_VALUES::GRAB::grabBreakAngle_max);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Grab Separation Force", FGInternal::GRAB::grabSeparationForce);
+				draw_slider("Separation Force", &FGInternal::GRAB::grabSeparationForceBoost, VALUES::SAFE_VALUES::GRAB::grabSeparationForce_min, VALUES::SAFE_VALUES::GRAB::grabSeparationForce_max);
 			} else {
 				ImGui::Text(u8"Super Grab uses all of the");
 				ImGui::Text(u8"following features that will");
@@ -447,6 +454,9 @@ namespace menu {
 				ImGui::Dummy(ImVec2(0.0f, 2.5f));
 				draw_button("Break Grab Angle", FGInternal::GRAB::grabBreakAngle);
 				draw_slider("Angle", &FGInternal::GRAB::grabBreakAngleBoost, 0, 360);
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				draw_button("Grab Separation Force", FGInternal::GRAB::grabSeparationForce);
+				draw_slider("Separation Force", &FGInternal::GRAB::grabSeparationForceBoost, 0, 2137);
 			} else {
 				ImGui::Text(u8"Super Grab uses all of the");
 				ImGui::Text(u8"following features that will");

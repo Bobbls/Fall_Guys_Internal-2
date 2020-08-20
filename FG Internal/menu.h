@@ -88,6 +88,9 @@ namespace FGInternal {
 
 		extern bool grabberVelocity;
 		extern float grabberVelocityBoost;
+
+		extern bool grabSeparationForce;
+		extern float grabSeparationForceBoost;
 	};
 };
 

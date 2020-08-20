@@ -363,6 +363,7 @@ void update() {
 	const constexpr auto round_door_dash = fnv::hash_constexpr("round_door_dash");
 	const constexpr auto round_tip_toe = fnv::hash_constexpr("round_tip_toe");
 	const constexpr auto round_match_fall = fnv::hash_constexpr("round_match_fall");
+	const constexpr auto round_royal_rumble = fnv::hash_constexpr("round_royal_rumble");
 
 	if (fnv::hash_runtime(current_state->klass->_1.name) == StateGameInProgress) {
 		auto state_game_in_progress = reinterpret_cast<FGClient_StateGameInProgress_o*>(current_state);
@@ -505,14 +506,14 @@ void update() {
 					character->fields._data->fields.armLength = FLT_MAX;
 					character->fields._data->fields.playerGrabCheckPredictionBase = FLT_MAX;
 					character->fields._data->fields.playerGrabImmediateVelocityReduction = 0.f;
-					character->fields._data->fields.playerGrabberDragDirectionContribution = 1;
+					character->fields._data->fields.playerGrabberDragDirectionContribution = 1.f;
 					character->fields._data->fields.grabCooldown = 0.f;
 					character->fields._data->fields.playerGrabRegrabDelay = 0.f;
 					character->fields._data->fields.playerGrabBreakTimeJumpInfluence = 0.f;
 					character->fields._data->fields.forceReleaseRegrabCooldown = 0.f;
 					character->fields._data->fields.breakGrabAngle = 360;
-					character->fields._data->fields.playerGrabberVelocityComponent = FGInternal::GRAB::grabberVelocityBoost;
-					character->fields._data->fields.playerGrabbeeVelocityComponent = 1 - FGInternal::GRAB::grabberVelocityBoost;
+					character->fields._data->fields.playerGrabBreakSeparationForce = 0.f;
+					character->fields._data->fields.playerGrabbeeInvulnerabilityWindow = 0.f;
 				} else if (FGInternalHelper::disable_supergrabfeature) {
 					character->fields._data->fields.playerGrabDetectRadius = VALUES::DEFAULT_VALUES::default_playerGrabDetectRadius;
 					character->fields._data->fields.playerGrabCheckDistance = VALUES::DEFAULT_VALUES::default_playerGrabCheckDistance;
@@ -527,8 +528,8 @@ void update() {
 					character->fields._data->fields.playerGrabBreakTimeJumpInfluence = VALUES::DEFAULT_VALUES::default_playerGrabBreakTimeJumpInfluence;
 					character->fields._data->fields.forceReleaseRegrabCooldown = VALUES::DEFAULT_VALUES::default_forceReleaseRegrabCooldown;
 					character->fields._data->fields.breakGrabAngle = VALUES::DEFAULT_VALUES::default_breakGrabAngle;
-					character->fields._data->fields.playerGrabberVelocityComponent = VALUES::DEFAULT_VALUES::default_playerGrabberVelocityComponent;
-					character->fields._data->fields.playerGrabbeeVelocityComponent = VALUES::DEFAULT_VALUES::default_playerGrabbeeVelocityComponent;
+					character->fields._data->fields.playerGrabBreakSeparationForce = VALUES::DEFAULT_VALUES::default_playerGrabBreakSeparationForce;
+					character->fields._data->fields.playerGrabbeeInvulnerabilityWindow = VALUES::DEFAULT_VALUES::default_playerGrabbeeInvulnerabilityWindow;
 					FGInternalHelper::disable_supergrabfeature = false;
 				}
 
@@ -601,10 +602,9 @@ void update() {
 				}
 
 				if (FGInternal::GRAB::grabberVelocity) {
-					character->fields._data->fields.playerGrabberVelocityComponent = FGInternal::GRAB::grabberVelocityBoost;
-					character->fields._data->fields.playerGrabbeeVelocityComponent = 1 - FGInternal::GRAB::grabberVelocityBoost;
-				}
-				else if (!FGInternal::GRAB::grabBreakAngle) {
+					character->fields._data->fields.playerGrabberVelocityComponent = 1 - FGInternal::GRAB::grabberVelocityBoost;
+					character->fields._data->fields.playerGrabbeeVelocityComponent = FGInternal::GRAB::grabberVelocityBoost;
+				} else if (!FGInternal::GRAB::grabBreakAngle) {
 					character->fields._data->fields.playerGrabberVelocityComponent = VALUES::DEFAULT_VALUES::default_playerGrabberVelocityComponent;
 					character->fields._data->fields.playerGrabbeeVelocityComponent = VALUES::DEFAULT_VALUES::default_playerGrabbeeVelocityComponent;
 				}
@@ -617,8 +617,19 @@ void update() {
 								|| !character->fields._ActiveTagAccessory_k__BackingField->fields._isAccessoryEnabled) {
 								vector vec_min, vec_max;
 								if (get_bounding_box2d(character->fields._collider, vec_min, vec_max))
-									draw_manager::add_rect_on_screen(vec_min, vec_max, 0xFFE33B76, 0.f, -1, 2.5f);
+									draw_manager::add_rect_on_screen(vec_min, vec_max, 0xFFDB3030, 0.f, -1, 2.5f);
 							}
+						}
+					}
+				}
+				if (game_level == round_royal_rumble) {
+					if (FGInternal::ESP::show_player_with_tail) {
+						if (character->fields._ActiveTagAccessory_k__BackingField
+							|| std::uintptr_t(character->fields._ActiveTagAccessory_k__BackingField) == std::uintptr_t(character->fields._tailTagAccessory)
+							|| character->fields._ActiveTagAccessory_k__BackingField->fields._isAccessoryEnabled) {
+							vector vec_min, vec_max;
+							if (get_bounding_box2d(character->fields._collider, vec_min, vec_max))
+								draw_manager::add_rect_on_screen(vec_min, vec_max, 0xFFDB3030, 0.f, -1, 2.5f);
 						}
 					}
 				}
