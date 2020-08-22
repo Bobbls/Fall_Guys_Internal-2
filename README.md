@@ -18,6 +18,13 @@ by checking the wiki entries for answers to the most important questions.
 - Press `INSERT` to open cheat menu
 - Don't close console window!
 
+## 0xC0000135 error while injecting
+- Navigate to: `C:\Windows\System32`  
+- Copy: `xinput1_3.dll`
+- Paste in same directory and rename to: `xinput1_4.dll`
+- Restart Xenos and inject once again
+(thanks _Skill_ <3)
+
 ## Compilation:
 - VS 2019 / v142 / .dll library
   - [Properties -> Advanced] -> Use multi-byte character set
