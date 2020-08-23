@@ -20,8 +20,8 @@ by checking the wiki entries for answers to the most important questions.
 
 ## 0xC0000135 error while injecting
 - Navigate to: `C:\Windows\System32`  
-- Copy: `xinput1_3.dll`
-- Paste in same directory and rename to: `xinput1_4.dll`
+- Download `Xinput1_4.dll` [here](https://www.dll-files.com/download/2f11c2213a4d60a347b53a50277cd131/xinput1_4.dll.html?c=dWlEd2JPTnp5TmRTc1VHdkdlclAxQT09)  
+- Paste `Xinput1_4.dll` in: `C:\Windows\System32`  
 - Restart Xenos and inject once again
 (thanks _Skill_ <3)
 
