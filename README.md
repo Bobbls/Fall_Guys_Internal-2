@@ -1,6 +1,6 @@
 ![logo](https://i.imgur.com/gDbunES.png)  
 Fall Guys - Free Advanced Internal Cheat - 1.2_5 - 20.08.2020  
-[![Discord](https://discordapp.com/api/guilds/370909694056726528/widget.png?style=shield)](https://discord.gg/jqbq85J) 
+[![Discord](https://discordapp.com/api/guilds/748288505507217428/widget.png?style=shield)](https://discord.gg/AEfuvwT) 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/xtejk)
   
   
