@@ -322,6 +322,7 @@ void update() {
 	if (!current_state || reinterpret_cast<Il2CppClass*>(current_state->klass) != current_state->klass->_1.klass)
 		return;
 
+	
 	game::main_camera = std::uintptr_t(0);
 	auto gameobjectmanager = *reinterpret_cast<game_object_manager**>(game::unity + signatures::game_object_manager);
 	for (auto i = gameobjectmanager->tagged_objects; std::uintptr_t(i) != std::uintptr_t(&gameobjectmanager->last_tagged_object); i = i->next_node) {
@@ -383,6 +384,7 @@ void update() {
 		if (!current_game_level)
 			return;
 
+		client_game_manager->fields._characterDataMonitor->fields._timeToRunNextCharacterControllerDataCheck = FLT_MAX;
 		auto game_level = fnv::whash_runtime(current_game_level->fields.c_str);
 
 		auto get_character_team_id = [&](uint32_t net_id) -> int32_t {

@@ -1,18 +1,14 @@
-![logo](https://i.imgur.com/gDbunES.png)  
-Fall Guys - Free Advanced Internal Cheat - 1.2_5 - 20.08.2020  
-[![Discord](https://img.shields.io/discord/748288505507217428.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/AEfuvwT)
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/xtejk)
-  
-  
-## Beginning:
-- A good way to get to know the cheat and its files and all the stuff related to it is  
-by checking the wiki entries for answers to the most important questions.  
-[https://github.com/xTeJk/Fall_Guys_Internal/wiki](https://github.com/xTeJk/Fall_Guys_Internal/wiki)
+Fall Guys - Free Advanced Internal Cheat - 1.2_69 - 24.08.2020  
+
+ 
+CREDITS:
+B3akers - https://github.com/B3akers/FlyGuys
+
+xTeJk - Adding sliders for a bunch of variables
+
+Me - literally just updating offsets because the original maintainer is now selling it
   
 ## How to:
-- Check the publication date of the latest public branch (https://steamdb.info/app/1097150/depots/)
-  - If it's the same as the version the internal fits, then download latest version [here](https://github.com/xTeJk/Fall_Guys_Internal/releases)
-  - If it's not the same, go to https://github.com/xTeJk/Fall_Guys_Internal#offsets and update the offsets
 - Start game in any configuration
 - Inject cheat with [Xenos](https://github.com/DarthTon/Xenos/releases/download/2.3.2/Xenos_2.3.2.7z) (Native Inject / Existing Process)
 - Press `INSERT` to open cheat menu

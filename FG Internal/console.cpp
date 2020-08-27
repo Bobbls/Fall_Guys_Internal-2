@@ -13,8 +13,7 @@ void console::alloc()
 	SetConsoleTitle("FG Internal");
 	printf("Cheat menu should be available under the INSERT button. \n");
 	printf("If it's not, press DEL (above the movement arrows) then INJECT again. \n\n");
-	printf("Discord: https://discord.gg/GnPdZAh \n");
-	printf("Github: https://github.com/xTeJk/Fall_Guys_Internal \n");
+
 
 }
 

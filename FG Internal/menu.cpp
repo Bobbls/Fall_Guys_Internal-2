@@ -595,13 +595,12 @@ namespace menu {
 	}
 
 	void update_indicators() {
-		auto text_size = draw_manager::calc_text_size(12, "TAKE");
+		auto text_size = draw_manager::calc_text_size(12, "");
 		auto y = float(15);
 
 		if (!FGInternal::GENERAL::hide_corner_text) {
 			draw_manager::add_text_on_screen({ 5, y }, 0xFF232323, 14, "FG Internal");
 			y += text_size.y + 4.f;
-			draw_manager::add_text_on_screen({ 5, y }, 0xFF363636, 12, u8"» github.com/xTeJk «");
 			y += text_size.y + 3.f;
 			draw_manager::add_text_on_screen({ 5, y }, 0xFF363636, 12, u8"» INSERT » Open Cheat Menu");
 			y += text_size.y + 3.f;
